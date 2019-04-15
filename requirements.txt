@@ -1,0 +1,8 @@
+gps
+scapy
+bluepy
+pybluez
+pybluez[ble]
+redis
+netifaces
+psycopg2

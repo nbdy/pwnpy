@@ -1,0 +1,30 @@
+{
+  "wifi": {
+    "interface": "wlan0",
+    "promiscuous": true,
+    "enable": false
+  },
+  "bluetooth": {
+    "interface": "hci0",
+    "onlyLE": false,
+    "onlyClassic": false,
+    "enable": true,
+    "classicScanTime": 4,
+    "leScanTime": 2
+  },
+  "gps": {
+    "sleepTime": 1
+  },
+  "manager": {
+    "sleepTime": 3,
+    "gpsReCountMax": 5,
+    "wifiReCountMax": 5,
+    "btReCountMax": 5
+  },
+  "database": {
+    "host": "localhost",
+    "database": "pwnpi",
+    "user": "postgres",
+    "password": "postgres"
+  }
+}
