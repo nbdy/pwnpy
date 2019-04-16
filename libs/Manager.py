@@ -22,9 +22,7 @@ class Manager(T):
     wifi = None
     bluetooth = None
 
-    gpsReCounter = 0
-    btReCounter = 0
-    wifiReCounter = 0
+    reCounter = {}
 
     def __init__(self, cfg):
         T.__init__(self)
@@ -38,21 +36,34 @@ class Manager(T):
 
     def _on_run(self):
         self.gps.start()
+        if self.cfg["manager"]["waitForPosition"]:
+            while not self.gps.cP:
+                print "waiting for gps"
+                sleep(1)
         self.wifi.start()
         self.bluetooth.start()
 
+    def __restart_service(self, srv, name):
+        if not self.cfg[name]["enable"]:
+            return
+        if name not in self.reCounter.keys():
+            self.reCounter[name] = 0
+        if not srv.do_run and self.cfg[name]["reCounterMax"] >= self.reCounter[name]:
+            if name == "gps":
+                self.gps = GPS(self.db, self.cfg[name])
+            elif name == "wifi":
+                self.wifi = WiFi(self.db, self.cfg[name])
+            elif name == "bluetooth":
+                self.bluetooth = Bluetooth(self.db, self.cfg[name])
+            self.reCounter[name] += 1
+
     def _work(self):
-        if not self.gps.do_run and self.cfg["manager"]["gpsReCountMax"] >= self.gpsReCounter:
-            self.gps = GPS(self.db, self.cfg["gps"])
-            self.gpsReCounter += 1
-        if not self.bluetooth.do_run and self.cfg["manager"]["btReCountMax"] >= self.gpsReCounter:
-            self.bluetooth = Bluetooth(self.db, self.cfg["bluetooth"])
-            self.btReCounter += 1
-        if not self.wifi.do_run and self.cfg["manager"]["wifiReCountMax"] >= self.gpsReCounter:
-            self.wifi = WiFi(self.db, self.cfg["wifi"])
-            self.wifiReCounter += 1
+        self.__restart_service(self.gps, "gps")
+        self.__restart_service(self.wifi, "wifi")
+        self.__restart_service(self.bluetooth, "bluetooth")
         sleep(self.cfg["manager"]["sleepTime"])
 
     def _on_stop(self):
         self.wifi.stop()
         self.bluetooth.stop()
+        self.gps.stop()

@@ -1,20 +1,16 @@
 from bluepy.btle import Scanner as btleScanner
 from bluetooth import discover_devices
 
-from libs import Scanner, Device
+from libs import Scanner
 
 
-class BluetoothDevice(Device):
-    device_type = "classic"
+class BluetoothDevice(object):
+    address = None
     name = None
 
     def __init__(self, address, name):
-        Device.__init__(self, address)
+        self.address = address
         self.name = name
-
-    @staticmethod
-    def keys():
-        return Device.keys() + ["name"]
 
     @staticmethod
     def dummy():
@@ -22,11 +18,14 @@ class BluetoothDevice(Device):
 
 
 class BluetoothLEDevice(BluetoothDevice):
-    device_type = "le"
+    rssi = None
+    connectable = None
+    advertisements = []
 
-    def __init__(self, address, name, **kwargs):
+    def __init__(self, address, name, rssi, connectable):
         BluetoothDevice.__init__(self, address, name)
-        self._parse_kwargs(kwargs)
+        self.rssi = rssi
+        self.connectable = connectable
 
 
 class Bluetooth(Scanner):
@@ -36,13 +35,20 @@ class Bluetooth(Scanner):
         print "doing classic scan"
         devs = discover_devices(duration=self.cfg["classicScanTime"], lookup_names=True)
         for addr, name in devs:
-            self.db.update_bluetooth_device(BluetoothDevice(addr, name))  # todo read more
+            self.db.bluetooth_classic_device_insert(BluetoothDevice(addr, name))  # todo read more
 
     def scan_btle(self):
         print "doing le scan"
         devs = btleScanner().scan(self.cfg["leScanTime"])
         for dev in devs:
-            self.db.update_bluetooth_device(BluetoothLEDevice(dev.addr, ""))  # todo read more
+            d = BluetoothLEDevice(dev.addr, "", dev.rssi, dev.connectable)  # todo read more
+            for adtype, desc, val in dev.getScanData():
+                d.advertisements.append({
+                    "type": adtype,
+                    "desc": desc,
+                    "value": val
+                })
+            self.db.bluetooth_le_device_insert(d)
 
     def _work(self):
         if self.cfg["onlyClassic"] or not self.cfg["onlyLE"]:

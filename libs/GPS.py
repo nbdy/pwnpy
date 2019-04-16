@@ -1,43 +1,42 @@
-from time import sleep
-from uuid import uuid4
-
+from datetime import datetime
 import gps
 
-from libs import Scanner, DBObject
+from libs import Scanner
 
 
-class Position(DBObject):
+class Position(object):
     longitude = None
     latitude = None
     altitude = None
     speed = None
-    satellites = None
-    satellites_used = None
     time = None
 
-    def __init__(self, client):
-        DBObject.__init__(self, uuid=uuid4())  # todo generate uuid from lng,lat,alt
-        self.longitude = client.fix.longitude
-        self.latitude = client.fix.latitude
-        self.altitude = client.fix.altitude
-        self.speed = client.fix.speed
-        self.time = client.fix.time
-        self.satellites_used = client.fix.satellites_used
-        self.satellites = client.fix.satellites
+    def __init__(self, data):
+        self.longitude = data["lon"]
+        self.latitude = data["lat"]
+        self.altitude = data["alt"]
+        self.speed = data["speed"]
+        self.time = datetime.now()
 
 
 class GPS(Scanner):
     name = "gps"
-
-    position_id = None
-    position = None
     client = None
+    cP = None
 
     def __init__(self, db, cfg):
         Scanner.__init__(self, db, cfg)
-        self.client = gps.gps()
+        self.client = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_JSON)
+
+    @staticmethod
+    def _check_data(data, keys):
+        for key in keys:
+            if key not in data.keys():
+                return False
+        return True
 
     def _work(self):
-        self.position = Position(self.client)
-        self.position_id = self.position.uuid
-        sleep(self.cfg["sleepTime"])
+        new_data = self.client.next()
+        if self._check_data(new_data, ["lon", "lat", "alt", "speed"]):
+            self.cP = Position(new_data)
+            self.db.update_position(self.cP)

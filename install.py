@@ -11,7 +11,7 @@ class Setup(object):
         system("pip3 install psycopg2")
         system("sudo service postgresql start")
         system("sudo -u postgres psql CREATE USER pwnpi WITH PASSWORD 'pwnpi' CREATEDB;")
-        system("sudo -u postgres psql CREATE DATABASE pwnpi OWNER pwnpi;")  # todo create layout
+        system("sudo -u postgres psql CREATE DATABASE pwnpi OWNER pwnpi;")
 
     @staticmethod
     def setup_redis_database():
@@ -107,6 +107,7 @@ def _help():
     exit()
 
 
+'''
 if __name__ == '__main__':
     i = 0
     if len(argv) == 1:
@@ -133,3 +134,4 @@ if __name__ == '__main__':
         elif argv[i] in ["--help"]:
             _help()
         i += 1
+'''

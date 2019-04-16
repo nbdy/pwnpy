@@ -2,24 +2,26 @@
   "wifi": {
     "interface": "wlan0",
     "promiscuous": true,
-    "enable": false
+    "enable": false,
+    "reCounterMax": 5
   },
   "bluetooth": {
     "interface": "hci0",
-    "onlyLE": false,
+    "onlyLE": true,
     "onlyClassic": false,
     "enable": true,
     "classicScanTime": 4,
-    "leScanTime": 2
+    "leScanTime": 2,
+    "reCounterMax": 5
   },
   "gps": {
-    "sleepTime": 1
+    "enable": true,
+    "sleepTime": 1,
+    "reCounterMax": 5
   },
   "manager": {
     "sleepTime": 3,
-    "gpsReCountMax": 5,
-    "wifiReCountMax": 5,
-    "btReCountMax": 5
+    "waitForPosition": true
   },
   "database": {
     "host": "localhost",

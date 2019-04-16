@@ -3,7 +3,7 @@ from time import sleep
 from scapy.all import sniff
 from scapy.layers.dot11 import Dot11
 
-from libs import Scanner, Device
+from libs import Scanner
 
 
 class DeviceTypes(object):
@@ -50,14 +50,15 @@ class StaticFunctions(object):
         return EncryptionTypes.TYPE_NONE  # todo
 
 
-class WiFiDevice(Device):
+class WiFiDevice(object):
+    address = None
     device_type = None
     channel = None
     encryption = None
     communication_partners = None
 
     def __init__(self, address, **kwargs):
-        Device.__init__(self, address)
+        self.address = address
         if "device_type" in kwargs:
             self.device_type = kwargs.get("device_type")
         if "channel" in kwargs:
@@ -68,10 +69,6 @@ class WiFiDevice(Device):
             self.communication_partners = kwargs.get("communication_partners")
         else:
             self.communication_partners = []
-
-    @staticmethod
-    def keys():
-        return Device.keys() + ["device_type", "channel", "encryption", "communication_partners"]
 
     @staticmethod
     def dummy():
@@ -126,10 +123,6 @@ class WiFiAPDevice(WiFiDevice):
             self.encryption = kwargs.get("encryption")
         else:
             self.encryption = EncryptionTypes.TYPE_NONE
-
-    @staticmethod
-    def keys():
-        return WiFiDevice.keys() + ["essid"]
 
     @staticmethod
     def dummy():
