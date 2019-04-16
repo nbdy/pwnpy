@@ -131,6 +131,15 @@ class Database(object):
         self.cn.commit()
         cr.close()
 
+    query_manager_run_insert = """INSERT INTO manager (start, "end") VALUES ('%s', '%s')"""
+
+    def manager_run_insert(self, start, end):
+        cr = self.cn.cursor()
+        tmp = self.query_manager_run_insert % (start, end)
+        cr.execute(tmp)
+        self.cn.commit()
+        cr.close()
+
 
 if __name__ == '__main__':
     Database({"user": "postgres", "database": "pwnpi", "password": "postgres", "host": "localhost"})

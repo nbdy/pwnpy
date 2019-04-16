@@ -21,7 +21,8 @@
   },
   "manager": {
     "sleepTime": 3,
-    "waitForPosition": true
+    "waitForPosition": true,
+    "cleanshutdPipe": "/tmp/cleanshutd"
   },
   "database": {
     "host": "localhost",

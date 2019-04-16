@@ -106,7 +106,7 @@ if __name__ == '__main__':
         elif argv[i] in ["-ua", "--uninstall-autostart"]:
             should_not_be_root()
             Setup.uninstall_autostart()
-        elif argv[i] in ["-i", "--install"]:
+        elif argv[i] in ["-d", "--dependencies"]:
             should_be_root()
             Setup.dependencies()
         elif argv[i] in ["-db", "--database"]:
