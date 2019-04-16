@@ -1,3 +1,5 @@
+from os import geteuid
+
 from bluepy.btle import Scanner as btleScanner
 from bluetooth import discover_devices
 
@@ -31,14 +33,15 @@ class BluetoothLEDevice(BluetoothDevice):
 class Bluetooth(Scanner):
     name = "bluetooth"
 
+    def _on_run(self):
+        self.do_run = geteuid() == 0  # dont need to try if we dont have rights
+
     def scan_classic(self):
-        print "doing classic scan"
         devs = discover_devices(duration=self.cfg["classicScanTime"], lookup_names=True)
         for addr, name in devs:
             self.db.bluetooth_classic_device_insert(BluetoothDevice(addr, name))  # todo read more
 
     def scan_btle(self):
-        print "doing le scan"
         devs = btleScanner().scan(self.cfg["leScanTime"])
         for dev in devs:
             d = BluetoothLEDevice(dev.addr, "", dev.rssi, dev.connectable)  # todo read more

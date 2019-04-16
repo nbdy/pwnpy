@@ -7,24 +7,10 @@ class Setup(object):
 
     @staticmethod
     def setup_postgresql_database():
-        system("sudo apt install postgresql -y")
-        system("pip3 install psycopg2")
         system("sudo service postgresql start")
-        system("sudo -u postgres psql CREATE USER pwnpi WITH PASSWORD 'pwnpi' CREATEDB;")
-        system("sudo -u postgres psql CREATE DATABASE pwnpi OWNER pwnpi;")
 
     @staticmethod
-    def setup_redis_database():
-        system("sudo apt install redis")
-        system("pip3 install redis")
-
-    @staticmethod
-    def setup_mongodb_database():
-        system("sudo apt install mongodb-server mongodb-clients")
-        system("pip3 install pymongo")
-
-    @staticmethod
-    def install():
+    def dependencies():
         system("sudo apt install libssl-dev libbluetooth-dev python python-dev python-pip tshark reaver aircrack-ng git"
                " gpsd gpsd-clients libcurl4-openssl-dev -y")
         system("cd /tmp/;"
@@ -56,6 +42,8 @@ class Setup(object):
                "cd /tmp/;"
                "rm -rf wifite2")
         system("sudo pip install -r requirements.txt")
+        system("sudo apt install postgresql -y")
+        system("pip3 install psycopg2")
         return True
 
     @staticmethod
@@ -71,14 +59,14 @@ class Setup(object):
 
     @staticmethod
     def install_autostart():
-        with open(Setup.HEADLESS_AUTOSTART_PATH, 'a') as o:
+        with open(Setup.AUTOSTART_PATH, 'a') as o:
             o.write("/usr/bin/python " + getcwd() + "/pwn.py")
         return True
 
     @staticmethod
     def uninstall_autostart():
         _o = Setup.read_autostart_file()
-        with open(Setup.HEADLESS_AUTOSTART_PATH, 'w') as o:
+        with open(Setup.AUTOSTART_PATH, 'w') as o:
             for l in _o.split("\n"):
                 if "pwn.py" not in l:
                     o.write(l + "\n")
@@ -101,13 +89,12 @@ def _help():
     print("{arguments}:")
     print("\t-ia\t--install-autostart")
     print("\t-ua\t--uninstall-autostart")
-    print("\t-i\t--install")
-    print("\t-db\t--database\t\tone of [postgresql, mongodb, redis]")
+    print("\t-d\t--dependencies")
+    print("\t-db\t--database")
     print("\t--help")
     exit()
 
 
-'''
 if __name__ == '__main__':
     i = 0
     if len(argv) == 1:
@@ -121,17 +108,9 @@ if __name__ == '__main__':
             Setup.uninstall_autostart()
         elif argv[i] in ["-i", "--install"]:
             should_be_root()
-            Setup.install()
+            Setup.dependencies()
         elif argv[i] in ["-db", "--database"]:
-            if argv[i + 1] == "postgresql":
-                Setup.setup_postgresql_database()
-            elif argv[i + 1] == "redis":
-                Setup.setup_redis_database()
-            elif argv[i + 1] == "mongodb":
-                Setup.setup_mongodb_database()
-            else:
-                print("idk what '" + argv[i + 1] + "' is. ignoring it.")
+            Setup.setup_postgresql_database()
         elif argv[i] in ["--help"]:
             _help()
         i += 1
-'''

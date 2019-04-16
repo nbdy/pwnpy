@@ -7,7 +7,7 @@
   },
   "bluetooth": {
     "interface": "hci0",
-    "onlyLE": true,
+    "onlyLE": false,
     "onlyClassic": false,
     "enable": true,
     "classicScanTime": 4,

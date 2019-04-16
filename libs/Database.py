@@ -1,4 +1,5 @@
 import psycopg2
+from json import dumps, loads
 
 
 class Database(object):
@@ -17,46 +18,9 @@ class Database(object):
         r += "'"
         return r
 
-    def build_database(self):
-        cr = self.cn.cursor()
-        cr.execute("CREATE TABLE IF NOT EXISTS positions ("
-                   "longitude float NOT NULL,"
-                   "latitude float NOT NULL,"
-                   "altitude float NOT NULL,"
-                   "speed float NOT NULL,"
-                   "time timestamp NOT NULL"
-                   ");")
-        self.cn.commit()
-        cr.execute("CREATE TABLE IF NOT EXISTS wifi ("
-                   "address macaddr PRIMARY KEY NOT NULL,"
-                   "device_type text NOT NULL,"
-                   "channel int NOT NULL,"
-                   "encryption text NOT NULL,"
-                   "communication_partners text[],"
-                   "essid text,"
-                   "position timestamp NOT NULL"
-                   ");")
-        self.cn.commit()
-        cr.execute("CREATE TABLE IF NOT EXISTS bluetooth_classic ("
-                   "address macaddr PRIMARY KEY NOT NULL,"
-                   "name text,"
-                   "positions timestamp[]"
-                   ");")
-        self.cn.commit()
-        cr.execute("CREATE TABLE IF NOT EXISTS bluetooth_le ("
-                   "address macaddr PRIMARY KEY NOT NULL,"
-                   "name text,"
-                   "positions timestamp[],"
-                   "rssi integer,"
-                   "connectable boolean,"
-                   "advertisements text[][]"
-                   ");")
-        cr.close()
-
     def __init__(self, cfg):
         self.cfg = cfg
         self.cn = psycopg2.connect(self._build_connection_string())
-        self.build_database()
 
     query_position_insert = """INSERT INTO positions (longitude, latitude, altitude, speed, time) VALUES 
     ('%s', '%s', '%s', '%s', '%s');"""
@@ -109,7 +73,7 @@ class Database(object):
         cr.close()
 
     query_bluetooth_classic_device_insert = """INSERT INTO bluetooth_classic (address, name, positions) 
-    VALUES ('%s', '%s', '%s');"""
+    VALUES ('%s', '%s', '{%s}');"""
 
     def bluetooth_classic_device_insert(self, device):
         if self.bluetooth_classic_device_exists(device.address):
@@ -143,9 +107,10 @@ class Database(object):
         cr.close()
 
     query_bluetooth_le_device_insert = """INSERT INTO bluetooth_le (address, name, positions, rssi, connectable, 
-    advertisements) VALUES ('%s', '%s', '%s', '%s', '%s', '%s');"""
+    advertisements) VALUES ('%s', '%s', '{%s}', '%s', '%s', '%s');"""
 
     def bluetooth_le_device_insert(self, device):
+        device.advertisements = dumps(device.advertisements)
         if self.bluetooth_le_device_exists(device.address):
             self.bluetooth_le_device_update(device)
         else:
@@ -156,3 +121,16 @@ class Database(object):
             cr.execute(tmp)
             self.cn.commit()
             cr.close()
+
+    query_bluetooth_le_device_get = """SELECT * FROM bluetooth_le WHERE address = '%s';"""
+
+    def bluetooth_le_device_get(self, address):
+        cr = self.cn.cursor()
+        tmp = self.query_bluetooth_le_device_get % address
+        cr.execute(tmp)
+        self.cn.commit()
+        cr.close()
+
+
+if __name__ == '__main__':
+    Database({"user": "postgres", "database": "pwnpi", "password": "postgres", "host": "localhost"})
