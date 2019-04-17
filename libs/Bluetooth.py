@@ -34,7 +34,7 @@ class Bluetooth(Scanner):
     name = "bluetooth"
 
     def _on_run(self):
-        self.do_run = geteuid() == 0  # dont need to try if we dont have rights
+        self.do_run = geteuid() == 0 and self.cfg["enable"]  # dont need to try if we dont have rights
 
     def scan_classic(self):
         devs = discover_devices(duration=self.cfg["classicScanTime"], lookup_names=True)

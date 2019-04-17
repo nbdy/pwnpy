@@ -1,15 +1,17 @@
 {
   "wifi": {
-    "interface": "wlan0",
+    "interface": "wlan0mon",
     "promiscuous": true,
-    "enable": false,
-    "reCounterMax": 5
+    "enable": true,
+    "reCounterMax": 5,
+    "packetsPerChannel": 10,
+    "timeoutPerChannel": 3
   },
   "bluetooth": {
     "interface": "hci0",
     "onlyLE": false,
     "onlyClassic": false,
-    "enable": true,
+    "enable": false,
     "classicScanTime": 4,
     "leScanTime": 2,
     "reCounterMax": 5
@@ -22,6 +24,7 @@
   "manager": {
     "sleepTime": 3,
     "waitForPosition": true,
+    "cleanshutdEnable": false,
     "cleanshutdPipe": "/tmp/cleanshutd"
   },
   "database": {

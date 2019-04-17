@@ -67,7 +67,8 @@ class Manager(T):
             self.stop()
 
     def _work(self):
-        self.check_cleanshutd_pipe()
+        if self.cfg["manager"]["cleanshutdEnable"]:
+            self.check_cleanshutd_pipe()
         self.__restart_service(self.gps, "gps")
         self.__restart_service(self.wifi, "wifi")
         self.__restart_service(self.bluetooth, "bluetooth")
