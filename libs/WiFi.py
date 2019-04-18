@@ -1,6 +1,4 @@
-from time import sleep
 from os import system
-
 import netifaces
 from scapy.all import *
 
@@ -14,21 +12,13 @@ class DeviceTypes(object):
     TYPE_AP = "ap"
 
 
-class EncryptionTypes(object):
-    TYPE_NONE = "none"
-    TYPE_WEP = "wep"
-    TYPE_WPA = "wpa"
-    TYPE_WPA2 = "wpa2"
-    TYPE_RADIUS = "radius"
-
-
 class WiFiDevice(object):
     address = None
     essid = None
     rates = None
     device_type = None
     channel = -1
-    encryption = EncryptionTypes.TYPE_NONE
+    encryption = None
     communication_partner = None
 
     def __init__(self, address):
@@ -71,31 +61,12 @@ class WiFiAPDevice(WiFiDevice):
         self.parse_extra_data(pkt)
 
     def parse_extra_data(self, pkt):
-        crypto = ""
-        p = pkt.payload
-        while isinstance(p, Dot11Elt):
-            if p.ID == 0:
-                self.essid = p.info
-            elif p.ID == 3:
-                self.channel = ord(p.info)
-            elif isinstance(p, Dot11EltRates):
-                self.rates = p.rates
-            elif isinstance(p, Dot11EltRSN):
-                crypto += EncryptionTypes.TYPE_WPA2 + ","
-            elif p.ID == 221:
-                if isinstance(p, Dot11EltMicrosoftWPA) or \
-                        p.info.startswith('\x00P\xf2\x01\x01\x00'):
-                    crypto += EncryptionTypes.TYPE_WPA + ","
-            p = p.payload
-        if not crypto:
-            try:
-                if pkt.cap.privacy:
-                    crypto += EncryptionTypes.TYPE_WEP + ","
-                else:
-                    crypto += EncryptionTypes.TYPE_NONE + ","
-            except AttributeError:
-                crypto += EncryptionTypes.TYPE_NONE + ","
-        self.encryption = crypto[0:-2]
+        if pkt.haslayer(Dot11Beacon):
+            ns = pkt[Dot11Beacon].network_stats()
+            self.essid = ns["ssid"]
+            self.channel = ns["channel"]
+            self.rates = ','.join(map(str, ns["rates"]))
+            self.encryption = ','.join(ns["crypto"])
 
 
 class WiFiSTADevice(WiFiDevice):
@@ -106,23 +77,7 @@ class WiFiSTADevice(WiFiDevice):
         self.parse_extra_data(pkt)
 
     def parse_extra_data(self, pkt):
-        crypto = ""
-        p = pkt.payload
-        while isinstance(p, Dot11Elt):
-            if p.ID == 3:
-                self.channel = ord(p.info)
-            elif isinstance(p, Dot11EltRates):
-                self.rates = p.rates
-            elif isinstance(p, Dot11EltRSN):
-                crypto += EncryptionTypes.TYPE_WPA2 + ","
-            elif p.ID == 221:
-                if isinstance(p, Dot11EltMicrosoftWPA) or \
-                        p.info.startswith('\x00P\xf2\x01\x01\x00'):
-                    crypto += EncryptionTypes.TYPE_WPA + ","
-            p = p.payload
-        if not crypto:
-            crypto += EncryptionTypes.TYPE_NONE + ","
-        self.encryption = crypto[0:-2]
+        pass
 
 
 class WiFi(Scanner):

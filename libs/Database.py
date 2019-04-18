@@ -136,9 +136,10 @@ class Database(object):
 
     def wifi_device_update(self, device):
         cr = self.cn.cursor()
-        cr.execute("SELECT COUNT(1) FROM wifi WHERE '%s'=ANY(communication_partners);" % device.communication_partner)
-        r = cr.fetchall()
-        if r:
+        cr.execute("SELECT COUNT(1) FROM wifi WHERE address = '%s' AND communication_partners @> '{%s}';" % (
+            device.address, device.communication_partner))
+        r = cr.fetchall()[0][0]
+        if r != 0L:
             tmp = "UPDATE wifi SET positions = array_append(positions, '%s') WHERE address='%s'" % (
                 self.get_newest_position_timestamp(), device.address
             )
