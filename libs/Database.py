@@ -136,7 +136,7 @@ class Database(object):
 
     def wifi_device_update(self, device):
         cr = self.cn.cursor()
-        tmp = self.query_wifi_device_update % (self.get_newest_position_timestamp(), device.communication_partners,
+        tmp = self.query_wifi_device_update % (self.get_newest_position_timestamp(), device.communication_partner,
                                                device.address)
         cr.execute(tmp)
         self.cn.commit()
@@ -153,7 +153,7 @@ class Database(object):
         return r[0][0]
 
     query_wifi_device_insert = """INSERT INTO wifi (address, device_type, channel, encryption, communication_partners, 
-    essid, positions) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')"""
+    essid, positions) VALUES ('%s', '%s', '%s', '%s', '{%s}', '%s', '{%s}')"""
 
     def wifi_device_insert(self, device):
         if self.wifi_device_exists(device.address):
@@ -161,8 +161,8 @@ class Database(object):
         else:
             cr = self.cn.cursor()
             tmp = self.query_wifi_device_insert % (device.address, device.device_type, device.channel,
-                                                   device.encryption, device.communication_partners, device.essid,
-                                                   device.positions)
+                                                   device.encryption, device.communication_partner, device.essid,
+                                                   self.get_newest_position_timestamp())
             cr.execute(tmp)
             self.cn.commit()
             cr.close()
