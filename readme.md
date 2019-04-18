@@ -31,6 +31,7 @@ wardriving tool written to run on a raspberry pi zero with the [LiPo SHIM](https
     - communication partners
     - essid (if ap)
     - positions (as with ble)
+    - rates
 ```
 
 ### setup:

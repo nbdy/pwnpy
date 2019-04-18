@@ -160,7 +160,7 @@ class Database(object):
         return r[0][0]
 
     query_wifi_device_insert = """INSERT INTO wifi (address, device_type, channel, encryption, communication_partners, 
-    essid, positions) VALUES ('%s', '%s', '%s', '%s', '{%s}', '%s', '{%s}')"""
+    essid, positions, rates) VALUES ('%s', '%s', '%s', '%s', '{%s}', '%s', '{%s}', '%s')"""
 
     def wifi_device_insert(self, device):
         print device.rates
@@ -170,7 +170,7 @@ class Database(object):
             cr = self.cn.cursor()
             tmp = self.query_wifi_device_insert % (device.address, device.device_type, device.channel,
                                                    device.encryption, device.communication_partner, device.essid,
-                                                   self.get_newest_position_timestamp())
+                                                   self.get_newest_position_timestamp(), device.rates)
             cr.execute(tmp)
             self.cn.commit()
             cr.close()
