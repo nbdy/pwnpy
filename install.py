@@ -64,8 +64,15 @@ class Setup(object):
 
     @staticmethod
     def install_autostart():
+        lines = []
+        for l in Setup.read_autostart_file().split('\n'):
+            if "exit 0" not in l:
+                lines.append(l)
         with open(Setup.AUTOSTART_PATH, 'a') as o:
-            o.write("/usr/bin/python " + getcwd() + "/pwn.py " + getcwd() + "/config.json")
+            for l in lines:
+                o.write(l + '\n')
+            o.write("/usr/bin/python " + getcwd() + "/pwn.py " + getcwd() + "/config.json &")
+            o.write("exit 0")
         return True
 
     @staticmethod
