@@ -131,6 +131,42 @@ class Database(object):
         self.cn.commit()
         cr.close()
 
+    query_wifi_device_update = """UPDATE wifi SET positions = array_append(positions, '%s'), 
+    communication_partners = array_append(communication_partners, '%s') WHERE address = '%s';"""
+
+    def wifi_device_update(self, device):
+        cr = self.cn.cursor()
+        tmp = self.query_wifi_device_update % (self.get_newest_position_timestamp(), device.communication_partners,
+                                               device.address)
+        cr.execute(tmp)
+        self.cn.commit()
+        cr.close()
+
+    query_wifi_device_exists = """SELECT EXISTS(SELECT 1 FROM wifi WHERE address = '%s');"""
+
+    def wifi_device_exists(self, address):
+        cr = self.cn.cursor()
+        tmp = self.query_wifi_device_exists % address
+        cr.execute(tmp)
+        r = cr.fetchall()
+        cr.close()
+        return r[0][0]
+
+    query_wifi_device_insert = """INSERT INTO wifi (address, device_type, channel, encryption, communication_partners, 
+    essid, positions) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')"""
+
+    def wifi_device_insert(self, device):
+        if self.wifi_device_exists(device.address):
+            self.wifi_device_update(device)
+        else:
+            cr = self.cn.cursor()
+            tmp = self.query_wifi_device_insert % (device.address, device.device_type, device.channel,
+                                                   device.encryption, device.communication_partners, device.essid,
+                                                   device.positions)
+            cr.execute(tmp)
+            self.cn.commit()
+            cr.close()
+
     query_manager_run_insert = """INSERT INTO manager (start, "end") VALUES ('%s', '%s')"""
 
     def manager_run_insert(self, start, end):

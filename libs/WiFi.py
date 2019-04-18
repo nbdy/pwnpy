@@ -10,17 +10,16 @@ from libs import Scanner
 
 
 class DeviceTypes(object):
-    TYPE_STA = 0
-    TYPE_AP = 1
-    DUMMY = -1
+    TYPE_STA = "sta"
+    TYPE_AP = "ap"
 
 
 class EncryptionTypes(object):
-    TYPE_NONE = 0
-    TYPE_WEP = 1
-    TYPE_WPA = 2
-    TYPE_WPA2 = 3
-    TYPE_RADIUS = 4
+    TYPE_NONE = "none"
+    TYPE_WEP = "wep"
+    TYPE_WPA = "wpa"
+    TYPE_WPA2 = "wpa2"
+    TYPE_RADIUS = "radius"
 
 
 class WiFiDevice(object):
@@ -107,8 +106,10 @@ class WiFi(Scanner):
         data = WiFiDevice.from_pkt(pkt)
         if data is not None:
             print data[0].address, ">", data[1].address
-            #self.db.update_wifi_device(data[0])
-            #self.db.update_wifi_device(data[1])
+            if data[0].address != ETHER_BROADCAST:
+                self.db.wifi_device_insert(data[0])
+            if data[1].address != ETHER_BROADCAST:
+                self.db.wifi_device_insert(data[1])
 
     def _on_run(self):
         if not self.cfg["enable"]:
