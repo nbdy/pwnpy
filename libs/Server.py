@@ -8,6 +8,8 @@ from json import dumps
 
 class Server(IThread):
     def _on_run(self):
+        if not self.do_run:
+            return
         app = Flask(__name__, static_folder='./server-data/static', template_folder='./server-data/templates')
 
         def dashboard():
