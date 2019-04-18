@@ -107,6 +107,7 @@ class WiFi(IThread):
             self.do_run = False
         if self.cfg["autoInterface"]:
             self.cfg["interface"] = self._find_wifi_interface()
+            print "using interface", self.cfg["interface"]
         if self.cfg["interface"] is None:
             self.do_run = False
         if self.cfg["interface"] not in netifaces.interfaces():
