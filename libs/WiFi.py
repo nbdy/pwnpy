@@ -87,12 +87,13 @@ class WiFi(IThread):
     name = "wifi"
 
     def __wifi_callback(self, pkt):
-        data = WiFiDevice.from_pkt(pkt)
-        if data is not None:
-            if data[0].address != ETHER_BROADCAST.lower():
-                self.db.wifi_device_insert(data[0])
-            if data[1].address != ETHER_BROADCAST.lower():
-                self.db.wifi_device_insert(data[1])
+        if pkt.haslayer(Dot11):
+            data = WiFiDevice.from_pkt(pkt)
+            if data is not None:
+                if data[0].address != ETHER_BROADCAST.lower():
+                    self.db.wifi_device_insert(data[0])
+                if data[1].address != ETHER_BROADCAST.lower():
+                    self.db.wifi_device_insert(data[1])
 
     @staticmethod
     def _find_wifi_interface():

@@ -14,6 +14,12 @@ class Setup(object):
         system("sudo apt install libssl-dev libbluetooth-dev python python-dev python-pip tshark reaver aircrack-ng git"
                " gpsd gpsd-clients libcurl4-openssl-dev libpcap-dev libpq-dev libglib2.0-dev -y")
         system("cd /tmp/;"
+               "git clone https://github.com/secdev/scapy;"
+               "cd scapy;"
+               "sudo python setup.py install;"
+               "cd /tmp/;"
+               "rm -rf scapy")
+        system("cd /tmp/;"
                "wget http://www.willhackforsushi.com/code/cowpatty/4.6/cowpatty-4.6.tgz;"
                "tar xf cowpatty-4.6.tgz;"
                "rm cowpatty-4.6.tgz;"

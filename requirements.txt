@@ -1,5 +1,4 @@
 gps
-scapy
 bluepy
 pybluez
 pybluez[ble]
