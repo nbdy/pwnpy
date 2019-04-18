@@ -50,8 +50,16 @@ e.g.:
     python install.py -d -db
     sudo -u postgres psql
     CREATE DATABASE pwnpi;
+    \password
+    \c pwnpi
+    \i sql/bluetooth_classic.sql
+    \i sql/bluetooth_le.sql
+    \i sql/manager.sql
+    \i sql/positions.sql
+    \i sql/wifi.sql
     \q
-    python install.py -ia 
+    python install.py -ia
+    vim config.json         # adjust values to your system
 ```
 
 you might also want to use [this](https://github.com/smthnspcl/clean-shutdown). <br>
@@ -67,6 +75,7 @@ python pwn.py /path/to/config.json
 ```
 - device timeline
 - intrusive stuff
+- error logging
 ```
 
 ### faq:
