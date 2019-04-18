@@ -48,7 +48,9 @@ usage: install.py {arguments}
 	
 e.g.: 
     python install.py -d -db
-    sudo -u postgres psql CREATE DATABASE pwnpi
+    sudo -u postgres psql
+    CREATE DATABASE pwnpi;
+    \q
     python install.py -ia 
 ```
 

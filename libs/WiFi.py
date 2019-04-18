@@ -32,9 +32,12 @@ class WiFiDevice(object):
         elif pkt.haslayer(Dot11) and pkt.getlayer(Dot11).type == 2L and not pkt.haslayer(EAPOL):
             s = WiFiSTADevice(pkt.getlayer(Dot11).addr2, pkt)
             r = WiFiAPDevice(pkt.getlayer(Dot11).addr1, pkt)
-        elif pkt.haslayer(Dot11ProbeReq):
+        elif pkt.haslayer(Dot11ProbeReq) or pkt.haslayer(Dot11AssoReq) or pkt.haslayer(Dot11ReassoReq):
             s = WiFiSTADevice(pkt.getlayer(Dot11).addr2, pkt)
             r = WiFiAPDevice(pkt.getlayer(Dot11).addr1, pkt)
+        elif pkt.haslayer(Dot11ProbeResp) or pkt.haslayer(Dot11AssoResp) or pkt.haslayer(Dot11ReassoResp):
+            s = WiFiAPDevice(pkt.getlayer(Dot11).addr2, pkt)
+            r = WiFiSTADevice(pkt.getlayer(Dot11).addr1, pkt)
         else:
             '''
             ds = pkt.FCfield & 0x3
@@ -86,9 +89,9 @@ class WiFi(Scanner):
     def __wifi_callback(self, pkt):
         data = WiFiDevice.from_pkt(pkt)
         if data is not None:
-            if data[0].address != ETHER_BROADCAST:
+            if data[0].address != ETHER_BROADCAST.lower():
                 self.db.wifi_device_insert(data[0])
-            if data[1].address != ETHER_BROADCAST:
+            if data[1].address != ETHER_BROADCAST.lower():
                 self.db.wifi_device_insert(data[1])
 
     def _on_run(self):

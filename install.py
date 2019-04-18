@@ -12,7 +12,7 @@ class Setup(object):
     @staticmethod
     def dependencies():
         system("sudo apt install libssl-dev libbluetooth-dev python python-dev python-pip tshark reaver aircrack-ng git"
-               " gpsd gpsd-clients libcurl4-openssl-dev libpcap-dev libpq-dev -y")
+               " gpsd gpsd-clients libcurl4-openssl-dev libpcap-dev libpq-dev libglib2.0-dev -y")
         system("cd /tmp/;"
                "wget http://www.willhackforsushi.com/code/cowpatty/4.6/cowpatty-4.6.tgz;"
                "tar xf cowpatty-4.6.tgz;"
