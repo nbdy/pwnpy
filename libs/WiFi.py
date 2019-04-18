@@ -2,7 +2,7 @@ from os import system
 import netifaces
 from scapy.all import *
 
-from libs import Scanner
+from libs import IThread
 
 # https://www.oreilly.com/library/view/80211-wireless-networks/0596100523/ch04.html
 
@@ -83,7 +83,7 @@ class WiFiSTADevice(WiFiDevice):
         pass
 
 
-class WiFi(Scanner):
+class WiFi(IThread):
     name = "wifi"
 
     def __wifi_callback(self, pkt):

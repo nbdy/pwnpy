@@ -5,3 +5,5 @@ pybluez
 pybluez[ble]
 netifaces
 psycopg2
+flask
+werkzeug

@@ -73,7 +73,7 @@ class Setup(object):
 
 def should_be_root():
     if geteuid() != 0:
-        print("need root for apt calls")
+        print("need root; rerun with sudo or as root")
         exit()
 
 

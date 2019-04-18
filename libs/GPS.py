@@ -1,7 +1,7 @@
 from datetime import datetime
 import gps
 
-from libs import Scanner
+from libs import IThread
 
 
 class Position(object):
@@ -19,13 +19,13 @@ class Position(object):
         self.time = datetime.now()
 
 
-class GPS(Scanner):
+class GPS(IThread):
     name = "gps"
     client = None
     cP = None
 
     def __init__(self, db, cfg):
-        Scanner.__init__(self, db, cfg)
+        IThread.__init__(self, db, cfg)
         self.client = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_JSON)
 
     @staticmethod

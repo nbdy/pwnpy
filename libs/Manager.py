@@ -7,6 +7,7 @@ from libs.Bluetooth import Bluetooth
 from libs.Database import Database
 from libs.GPS import GPS
 from libs.WiFi import WiFi
+from libs.Server import Server
 
 
 class NoConfigurationSuppliedException(Exception):
@@ -21,6 +22,7 @@ class Manager(T):
     db = None
     gps = None
     wifi = None
+    server = None
     bluetooth = None
 
     reCounter = {}
@@ -36,11 +38,13 @@ class Manager(T):
         self.db = Database(self.cfg["database"])
         self.gps = GPS(self.db, self.cfg["gps"])
         self.wifi = WiFi(self.db, self.cfg["wifi"])
+        self.server = Server(self.db, self.cfg["server"])
         self.bluetooth = Bluetooth(self.db, self.cfg["bluetooth"])
 
     def _on_run(self):
+        self.server.start()
         self.gps.start()
-        if self.cfg["manager"]["waitForPosition"]:
+        if self.cfg["manager"]["waitForPosition"] and self.cfg["gps"]["enable"]:
             while not self.gps.cP:
                 print "waiting for gps"
                 sleep(1)
@@ -75,6 +79,7 @@ class Manager(T):
         sleep(self.cfg["manager"]["sleepTime"])
 
     def _on_stop(self):
+        self.server.stop()
         self.wifi.stop()
         self.bluetooth.stop()
         self.gps.stop()

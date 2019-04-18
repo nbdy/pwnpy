@@ -1,8 +1,8 @@
 {
   "wifi": {
-    "interface": "wlan0mon",
+    "interface": "wlx00c0ca6dfced",
     "promiscuous": true,
-    "enable": true,
+    "enable": false,
     "reCounterMax": 5,
     "packetsPerChannel": 10,
     "timeoutPerChannel": 3
@@ -17,7 +17,7 @@
     "reCounterMax": 5
   },
   "gps": {
-    "enable": true,
+    "enable": false,
     "sleepTime": 1,
     "reCounterMax": 5
   },
@@ -32,5 +32,11 @@
     "database": "pwnpi",
     "user": "postgres",
     "password": "postgres"
+  },
+  "server": {
+    "enable": true,
+    "host": "0.0.0.0",
+    "port": 1337,
+    "threaded": true
   }
 }

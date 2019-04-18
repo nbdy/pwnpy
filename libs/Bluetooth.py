@@ -3,7 +3,7 @@ from os import geteuid
 from bluepy.btle import Scanner as btleScanner
 from bluetooth import discover_devices
 
-from libs import Scanner
+from libs import IThread
 
 
 class BluetoothDevice(object):
@@ -30,7 +30,7 @@ class BluetoothLEDevice(BluetoothDevice):
         self.connectable = connectable
 
 
-class Bluetooth(Scanner):
+class Bluetooth(IThread):
     name = "bluetooth"
 
     def _on_run(self):

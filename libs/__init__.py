@@ -30,7 +30,7 @@ class T(Thread):
         self._on_stop()
 
 
-class Scanner(T):
+class IThread(T):
     name = "scanner"
     db = None
     cfg = None

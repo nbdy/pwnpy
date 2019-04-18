@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% set title="dashboard" %}
+{% block body %}
+<div class="container">
+    <nav class="navbar navbar-light bg-light">
+      <a class="navbar-brand" href="#">pwnpy</a>
+    </nav>
+    &nbsp;
+    <div class="row">
+        {% for key, value in counts.items() %}
+        <div class="card" style="width: 15rem;">
+          <div class="card-body">
+            <h5 class="card-title">{{ key }}</h5>
+            <p class="card-text">{{ value }} rows</p>
+          </div>
+        </div>
+        {% endfor %}
+    </div>
+    &nbsp;
+    <div class="row">
+        <div class="dropdown">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="tableDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">bluetooth_classic</a>
+            <div class="dropdown-menu" aria-labelledby="tableDropdown">
+                {% for key, value in counts.items() %}
+                <a class="dropdown-item" href="#" onclick="tableChosen()">{{ key }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        <form class="form-inline">
+            <input type="text" class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" placeholder="Jane Doe">
+        </form>
+    </div>
+</div>
+{% endblock %}
