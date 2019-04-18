@@ -72,15 +72,9 @@ class Setup(object):
                     o.write(l + "\n")
 
 
-def should_not_be_root():
-    if geteuid() == 0:
-        print("should not modify", Setup.AUTOSTART_PATH, "with root permissions")
-        exit()
-
-
 def should_be_root():
     if geteuid() != 0:
-        print("need root for apt calls and display driver install")
+        print("need root for apt calls")
         exit()
 
 
@@ -101,10 +95,10 @@ if __name__ == '__main__':
         _help()
     while i < len(argv):
         if argv[i] in ["-ia", "--install-autostart"]:
-            should_not_be_root()
+            should_be_root()
             Setup.install_autostart()
         elif argv[i] in ["-ua", "--uninstall-autostart"]:
-            should_not_be_root()
+            should_be_root()
             Setup.uninstall_autostart()
         elif argv[i] in ["-d", "--dependencies"]:
             should_be_root()
