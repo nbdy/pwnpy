@@ -53,14 +53,14 @@ class Setup(object):
     @staticmethod
     def already_autostart_installed():
         for l in Setup.read_autostart_file():
-            if l.endswith("pwn.py"):
+            if l.startswith("python pwn.py"):
                 return True
         return False
 
     @staticmethod
     def install_autostart():
         with open(Setup.AUTOSTART_PATH, 'a') as o:
-            o.write("/usr/bin/python " + getcwd() + "/pwn.py")
+            o.write("/usr/bin/python " + getcwd() + "/pwn.py " + getcwd() + "/config.json")
         return True
 
     @staticmethod

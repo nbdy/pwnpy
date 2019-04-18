@@ -44,6 +44,11 @@ usage: install.py {arguments}
 	-d	--dependencies
 	-db	--database
 	--help
+	
+e.g.: 
+    python install.py -d -db
+    sudo -u postgres psql CREATE DATABASE pwnpi
+    python install.py -ia 
 ```
 
 you might also want to use [this](https://github.com/smthnspcl/clean-shutdown). <br>
@@ -61,7 +66,8 @@ python pwn.py /path/to/config.json
 ```
 
 ### faq:
-```
 - Q: why?
 - A: 
-```
+
++ Q: is there a case for this?
++ A: [yop](https://github.com/smthnspcl/pwnpi-case)
