@@ -88,7 +88,6 @@ class WiFi(IThread):
 
     def __wifi_callback(self, pkt):
         if pkt.haslayer(Dot11):
-            print "yaaaa"
             data = WiFiDevice.from_pkt(pkt)
             if data is not None:
                 if data[0].address != ETHER_BROADCAST.lower():

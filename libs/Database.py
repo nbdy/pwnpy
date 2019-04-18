@@ -121,7 +121,7 @@ class Database(object):
     query_wifi_device_exists = """SELECT EXISTS(SELECT 1 FROM wifi WHERE address = '%s');"""
 
     def wifi_device_exists(self, address):
-        return self._execute(self.query_wifi_device_exists % address, False, True)[0][0]
+        return self._execute(self.query_wifi_device_exists % address, fetchall=True)[0][0]
 
     query_wifi_device_insert = """INSERT INTO wifi (address, device_type, channel, encryption, communication_partners, 
     essid, positions, rates) VALUES ('%s', '%s', '%s', '%s', '{%s}', '%s', '{%s}', '%s')"""
