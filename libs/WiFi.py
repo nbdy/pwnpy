@@ -88,6 +88,7 @@ class WiFi(IThread):
 
     def __wifi_callback(self, pkt):
         if pkt.haslayer(Dot11):
+            print "yaaaa"
             data = WiFiDevice.from_pkt(pkt)
             if data is not None:
                 if data[0].address != ETHER_BROADCAST.lower():
@@ -107,7 +108,7 @@ class WiFi(IThread):
             self.do_run = False
         if self.cfg["autoInterface"]:
             self.cfg["interface"] = self._find_wifi_interface()
-            print "using interface", self.cfg["interface"]
+            print "[wifi] using interface:", self.cfg["interface"]
         if self.cfg["interface"] is None:
             self.do_run = False
         if self.cfg["interface"] not in netifaces.interfaces():
