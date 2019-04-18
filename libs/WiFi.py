@@ -94,9 +94,18 @@ class WiFi(IThread):
             if data[1].address != ETHER_BROADCAST.lower():
                 self.db.wifi_device_insert(data[1])
 
+    @staticmethod
+    def _find_wifi_interface():
+        for iface in netifaces.interfaces():
+            if iface.startswith('wl'):
+                return iface
+        return None
+
     def _on_run(self):
         if not self.cfg["enable"]:
             self.do_run = False
+        if self.cfg["autoInterface"]:
+            self.cfg["interface"] = self._find_wifi_interface()
         if self.cfg["interface"] is None:
             self.do_run = False
         if self.cfg["interface"] not in netifaces.interfaces():

@@ -1,5 +1,6 @@
 {
   "wifi": {
+    "autoInterface": true,
     "interface": "wlx00c0ca6dfced",
     "promiscuous": true,
     "enable": true,
