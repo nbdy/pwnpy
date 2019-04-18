@@ -68,10 +68,10 @@ class Setup(object):
         for l in Setup.read_autostart_file().split('\n'):
             if "exit 0" not in l:
                 lines.append(l)
-        with open(Setup.AUTOSTART_PATH, 'a') as o:
+        with open(Setup.AUTOSTART_PATH, 'w') as o:
             for l in lines:
                 o.write(l + '\n')
-            o.write("/usr/bin/python " + getcwd() + "/pwn.py " + getcwd() + "/config.json &")
+            o.write("/usr/bin/python " + getcwd() + "/pwn.py " + getcwd() + "/config.json &\n")
             o.write("exit 0")
         return True
 
