@@ -71,7 +71,7 @@ class WiFiAPDevice(WiFiDevice):
         self.parse_extra_data(pkt)
 
     def parse_extra_data(self, pkt):
-        crypto = set()
+        crypto = ""
         p = pkt.payload
         while isinstance(p, Dot11Elt):
             if p.ID == 0:
@@ -81,18 +81,21 @@ class WiFiAPDevice(WiFiDevice):
             elif isinstance(p, Dot11EltRates):
                 self.rates = p.rates
             elif isinstance(p, Dot11EltRSN):
-                crypto.add(EncryptionTypes.TYPE_WPA2)
+                crypto += EncryptionTypes.TYPE_WPA2 + ","
             elif p.ID == 221:
                 if isinstance(p, Dot11EltMicrosoftWPA) or \
                         p.info.startswith('\x00P\xf2\x01\x01\x00'):
-                    crypto.add(EncryptionTypes.TYPE_WPA)
+                    crypto += EncryptionTypes.TYPE_WPA + ","
             p = p.payload
         if not crypto:
-            if pkt.cap.privacy:
-                crypto.add(EncryptionTypes.TYPE_WEP)
-            else:
-                crypto.add(EncryptionTypes.TYPE_NONE)
-        self.encryption = crypto.__str__()
+            try:
+                if pkt.cap.privacy:
+                    crypto += EncryptionTypes.TYPE_WEP + ","
+                else:
+                    crypto += EncryptionTypes.TYPE_NONE + ","
+            except AttributeError:
+                crypto += EncryptionTypes.TYPE_NONE + ","
+        self.encryption = crypto[0:-2]
 
 
 class WiFiSTADevice(WiFiDevice):
@@ -103,7 +106,7 @@ class WiFiSTADevice(WiFiDevice):
         self.parse_extra_data(pkt)
 
     def parse_extra_data(self, pkt):
-        crypto = set()
+        crypto = ""
         p = pkt.payload
         while isinstance(p, Dot11Elt):
             if p.ID == 3:
@@ -111,15 +114,15 @@ class WiFiSTADevice(WiFiDevice):
             elif isinstance(p, Dot11EltRates):
                 self.rates = p.rates
             elif isinstance(p, Dot11EltRSN):
-                crypto.add(EncryptionTypes.TYPE_WPA2)
+                crypto += EncryptionTypes.TYPE_WPA2 + ","
             elif p.ID == 221:
                 if isinstance(p, Dot11EltMicrosoftWPA) or \
                         p.info.startswith('\x00P\xf2\x01\x01\x00'):
-                    crypto.add(EncryptionTypes.TYPE_WPA)
+                    crypto += EncryptionTypes.TYPE_WPA + ","
             p = p.payload
         if not crypto:
-            crypto.add(EncryptionTypes.TYPE_NONE)
-        self.encryption = crypto.__str__()
+            crypto += EncryptionTypes.TYPE_NONE + ","
+        self.encryption = crypto[0:-2]
 
 
 class WiFi(Scanner):

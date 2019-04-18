@@ -43,7 +43,6 @@ class Setup(object):
                "rm -rf wifite2")
         system("sudo pip install -r requirements.txt")
         system("sudo apt install postgresql -y")
-        system("pip install psycopg2")
         return True
 
     @staticmethod

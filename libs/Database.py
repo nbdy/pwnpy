@@ -163,7 +163,6 @@ class Database(object):
     essid, positions, rates) VALUES ('%s', '%s', '%s', '%s', '{%s}', '%s', '{%s}', '%s')"""
 
     def wifi_device_insert(self, device):
-        print device.rates
         if self.wifi_device_exists(device.address):
             self.wifi_device_update(device)
         else:
