@@ -60,7 +60,6 @@ class WiFiAPDevice(WiFiDevice):
 
     def __init__(self, address, pkt):
         WiFiDevice.__init__(self, address)
-        self.essid = pkt.info
         self.parse_extra_data(pkt)
 
     def parse_extra_data(self, pkt):
