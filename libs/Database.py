@@ -49,12 +49,12 @@ class Database(object):
     query_position_get_newest = """SELECT * FROM positions ORDER BY time DESC LIMIT 1;"""
 
     def get_newest_position_timestamp(self):
-        return self._execute(self.query_position_get_newest, False, True)[-1][-1]
+        return self._execute(self.query_position_get_newest, fetchall=True)[-1][-1]
 
     query_bluetooth_classic_device_exists = """SELECT EXISTS(SELECT 1 FROM bluetooth_classic WHERE address = '%s');"""
 
     def bluetooth_classic_device_exists(self, address):
-        return self._execute(self.query_bluetooth_classic_device_exists % address, False, True)[0][0]
+        return self._execute(self.query_bluetooth_classic_device_exists % address, fetchall=True)[0][0]
 
     query_bluetooth_classic_device_update = """UPDATE bluetooth_classic SET positions = array_append(positions, '%s') 
     WHERE address = '%s';"""
@@ -77,13 +77,14 @@ class Database(object):
     query_bluetooth_le_device_exists = """SELECT EXISTS(SELECT 1 FROM bluetooth_le WHERE address = '%s');"""
 
     def bluetooth_le_device_exists(self, address):
-        return self._execute(self.query_bluetooth_le_device_exists % address)[0][0]
+        return self._execute(self.query_bluetooth_le_device_exists % address, fetchall=True)[0][0]
 
     query_bluetooth_le_device_update = """UPDATE bluetooth_le SET positions = array_append(positions, '%s') 
     WHERE address = '%s';"""
 
     def bluetooth_le_device_update(self, device):
-        self._execute(self.get_newest_position_timestamp(), device.address, True)
+        self._execute(self.query_bluetooth_le_device_update % (self.get_newest_position_timestamp(), device.address),
+                      True)
 
     query_bluetooth_le_device_insert = """INSERT INTO bluetooth_le (address, name, positions, rssi, connectable, 
     advertisements) VALUES ('%s', '%s', '{%s}', '%s', '%s', '%s');"""

@@ -18,7 +18,7 @@
     </div>
     &nbsp;
     <div class="row">
-        <div class="dropdown">
+        <div class="dropdown" id="searchRow">
             <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="tableDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">bluetooth_classic</a>
             <div class="dropdown-menu" aria-labelledby="tableDropdown">
                 {% for key, value in counts.items() %}
@@ -27,7 +27,7 @@
             </div>
         </div>
         <form class="form-inline">
-            <input type="text" class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" placeholder="Jane Doe">
+            <input type="text" class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" placeholder="column name">
         </form>
     </div>
 </div>
