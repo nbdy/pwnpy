@@ -136,8 +136,15 @@ class Database(object):
 
     def wifi_device_update(self, device):
         cr = self.cn.cursor()
-        tmp = self.query_wifi_device_update % (self.get_newest_position_timestamp(), device.communication_partner,
-                                               device.address)
+        cr.execute("SELECT COUNT(1) FROM wifi WHERE '%s'=ANY(communication_partners);" % device.communication_partner)
+        r = cr.fetchall()
+        if r:
+            tmp = "UPDATE wifi SET positions = array_append(positions, '%s') WHERE address='%s'" % (
+                self.get_newest_position_timestamp(), device.address
+            )
+        else:
+            tmp = self.query_wifi_device_update % (self.get_newest_position_timestamp(), device.communication_partner,
+                                                   device.address)
         cr.execute(tmp)
         self.cn.commit()
         cr.close()
@@ -156,6 +163,7 @@ class Database(object):
     essid, positions) VALUES ('%s', '%s', '%s', '%s', '{%s}', '%s', '{%s}')"""
 
     def wifi_device_insert(self, device):
+        print device.rates
         if self.wifi_device_exists(device.address):
             self.wifi_device_update(device)
         else:

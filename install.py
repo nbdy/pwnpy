@@ -12,7 +12,7 @@ class Setup(object):
     @staticmethod
     def dependencies():
         system("sudo apt install libssl-dev libbluetooth-dev python python-dev python-pip tshark reaver aircrack-ng git"
-               " gpsd gpsd-clients libcurl4-openssl-dev -y")
+               " gpsd gpsd-clients libcurl4-openssl-dev libpcap-dev libpq-dev -y")
         system("cd /tmp/;"
                "wget http://www.willhackforsushi.com/code/cowpatty/4.6/cowpatty-4.6.tgz;"
                "tar xf cowpatty-4.6.tgz;"
@@ -43,7 +43,7 @@ class Setup(object):
                "rm -rf wifite2")
         system("sudo pip install -r requirements.txt")
         system("sudo apt install postgresql -y")
-        system("pip3 install psycopg2")
+        system("pip install psycopg2")
         return True
 
     @staticmethod

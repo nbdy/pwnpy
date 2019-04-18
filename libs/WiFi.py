@@ -42,6 +42,9 @@ class WiFiDevice(object):
         elif pkt.haslayer(Dot11) and pkt.getlayer(Dot11).type == 2L and not pkt.haslayer(EAPOL):
             s = WiFiSTADevice(pkt.getlayer(Dot11).addr2, pkt)
             r = WiFiAPDevice(pkt.getlayer(Dot11).addr1, pkt)
+        elif pkt.haslayer(Dot11ProbeReq):
+            s = WiFiSTADevice(pkt.getlayer(Dot11).addr2, pkt)
+            r = WiFiAPDevice(pkt.getlayer(Dot11).addr1, pkt)
         else:
             '''
             ds = pkt.FCfield & 0x3
@@ -56,28 +59,7 @@ class WiFiDevice(object):
 
     def parse_extra_data(self, pkt):
         # https://github.com/secdev/scapy/commit/32f081e08f5c3ee7a98606ed1a081bf4ee98fced is just for dot11beacon
-        crypto = set()
-        p = pkt.payload
-        while isinstance(p, Dot11Elt):
-            if p.ID == 0:
-                self.essid = p.info
-            elif p.ID == 3:
-                self.channel = ord(p.info)
-            elif isinstance(p, Dot11EltRates):
-                self.rates = p.rates
-            elif isinstance(p, Dot11EltRSN):
-                crypto.add("WPA2")
-            elif p.ID == 221:
-                if isinstance(p, Dot11EltMicrosoftWPA) or \
-                        p.info.startswith('\x00P\xf2\x01\x01\x00'):
-                    crypto.add("WPA")
-            p = p.payload
-        if not crypto:
-            if pkt.cap.privacy:
-                crypto.add("WEP")
-            else:
-                crypto.add("OPN")
-        print self.__dict__
+        pass
 
 
 class WiFiAPDevice(WiFiDevice):
@@ -88,6 +70,30 @@ class WiFiAPDevice(WiFiDevice):
         self.essid = pkt.info
         self.parse_extra_data(pkt)
 
+    def parse_extra_data(self, pkt):
+        crypto = set()
+        p = pkt.payload
+        while isinstance(p, Dot11Elt):
+            if p.ID == 0:
+                self.essid = p.info
+            elif p.ID == 3:
+                self.channel = ord(p.info)
+            elif isinstance(p, Dot11EltRates):
+                self.rates = p.rates
+            elif isinstance(p, Dot11EltRSN):
+                crypto.add(EncryptionTypes.TYPE_WPA2)
+            elif p.ID == 221:
+                if isinstance(p, Dot11EltMicrosoftWPA) or \
+                        p.info.startswith('\x00P\xf2\x01\x01\x00'):
+                    crypto.add(EncryptionTypes.TYPE_WPA)
+            p = p.payload
+        if not crypto:
+            if pkt.cap.privacy:
+                crypto.add(EncryptionTypes.TYPE_WEP)
+            else:
+                crypto.add(EncryptionTypes.TYPE_NONE)
+        self.encryption = crypto.__str__()
+
 
 class WiFiSTADevice(WiFiDevice):
     device_type = DeviceTypes.TYPE_STA
@@ -95,6 +101,25 @@ class WiFiSTADevice(WiFiDevice):
     def __init__(self, address, pkt):
         WiFiDevice.__init__(self, address)
         self.parse_extra_data(pkt)
+
+    def parse_extra_data(self, pkt):
+        crypto = set()
+        p = pkt.payload
+        while isinstance(p, Dot11Elt):
+            if p.ID == 3:
+                self.channel = ord(p.info)
+            elif isinstance(p, Dot11EltRates):
+                self.rates = p.rates
+            elif isinstance(p, Dot11EltRSN):
+                crypto.add(EncryptionTypes.TYPE_WPA2)
+            elif p.ID == 221:
+                if isinstance(p, Dot11EltMicrosoftWPA) or \
+                        p.info.startswith('\x00P\xf2\x01\x01\x00'):
+                    crypto.add(EncryptionTypes.TYPE_WPA)
+            p = p.payload
+        if not crypto:
+            crypto.add(EncryptionTypes.TYPE_NONE)
+        self.encryption = crypto.__str__()
 
 
 class WiFi(Scanner):
