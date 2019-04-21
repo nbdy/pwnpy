@@ -3,7 +3,7 @@
     "autoInterface": true,
     "interface": "wlx00c0ca6dfced",
     "promiscuous": true,
-    "enable": true,
+    "enable": false,
     "reCounterMax": 5,
     "packetsPerChannel": 10,
     "timeoutPerChannel": 3
@@ -12,13 +12,13 @@
     "interface": "hci0",
     "onlyLE": false,
     "onlyClassic": false,
-    "enable": true,
+    "enable": false,
     "classicScanTime": 4,
     "leScanTime": 2,
     "reCounterMax": 5
   },
   "gps": {
-    "enable": true,
+    "enable": false,
     "sleepTime": 1,
     "reCounterMax": 5
   },

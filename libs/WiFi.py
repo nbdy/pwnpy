@@ -109,6 +109,8 @@ class WiFi(IThread):
             print "[wifi] using interface:", self.cfg["interface"]
         if self.cfg["interface"] is None:
             self.do_run = False
+            print "[wifi] dont have an interface"
+            return
         if self.cfg["interface"] not in netifaces.interfaces():
             print "[wifi] interface '%s' does not exist" % self.cfg["interface"]
             self.do_run = False

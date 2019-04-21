@@ -7,10 +7,12 @@ from json import dumps
 
 
 class Server(IThread):
+    app = None
+
     def _on_run(self):
         if not self.do_run:
             return
-        app = Flask(__name__, static_folder='./server-data/static', template_folder='./server-data/templates')
+        self.app = Flask(__name__, static_folder='./server-data/static', template_folder='./server-data/templates')
 
         def dashboard():
             return render_template("dashboard.html",
@@ -21,16 +23,17 @@ class Server(IThread):
                                        "wifi": self.db.get_count("wifi")
                                    })
 
-        @app.route("/")
+        @self.app.route("/")
         def root():
             return dashboard()
 
-        @app.route("/*")
+        @self.app.route("/*")
         def catchall():
             return dashboard()
 
-        @app.route("/api/columns/<path:path>")
+        @self.app.route("/api/columns/<path:path>")
         def api_column_names(path):
             return make_response(dumps(self.db.get_column_names(path)))
 
-        app.run(self.cfg["host"], self.cfg["port"], False, threaded=self.cfg["threaded"])
+    def _work(self):
+        self.app.run(self.cfg["host"], self.cfg["port"], False, threaded=self.cfg["threaded"])

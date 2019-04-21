@@ -4,10 +4,14 @@
     <meta charset="UTF-8">
     <title>{{ title }}</title>
     <link href="{{ url_for('static', filename='css/bootstrap.css') }}" type="text/css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/leaflet.css') }}", type="text/css", rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/pwnpi.css') }}", type="text/css", rel="stylesheet">
     <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='js/popper.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
     <script src="{{ url_for('static', filename='js/pwnpi.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/leaflet.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/lvector.js') }}"></script>
 </head>
 <body>
 {% block body %}{% endblock %}
