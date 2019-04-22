@@ -17,17 +17,26 @@
         {% endfor %}
     </div>
     &nbsp;
-    <div class="row">
-        <div class="dropdown" id="searchRow">
+    <div class="row" id="searchRow">
+        <div class="dropdown">
             <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="tableDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">bluetooth_classic</a>
             <div class="dropdown-menu" aria-labelledby="tableDropdown">
                 {% for key, value in counts.items() %}
-                <a class="dropdown-item" href="#" onclick="tableChosen()">{{ key }}</a>
+                <a class="dropdown-item" href="#" onclick="tableChosen(this)">{{ key }}</a>
                 {% endfor %}
             </div>
         </div>
+        <p> WHERE </p>
+        <div class="dropdown">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="columnDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+            <div class="dropdown-menu" aria-labelledby="columnDropdown" id="columnDropdownMenu">
+
+            </div>
+        </div>
+        <p> EQUALS </p>
         <form class="form-inline">
             <input type="text" class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" placeholder="column name">
+            <button type="button" class="btn btn-primary" onclick="search()">search</button>
         </form>
     </div>
     <div id="searchResultTable" class="container">
@@ -38,20 +47,7 @@
 <div id="map" class="container"></div>
 <script>
     let currentPosition = {{ currentPosition }};
-
-    let map = L.map('map');
-    map.setView(currentPosition, 13);
-
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
-        id: 'mapbox.streets',
-        accessToken: 'pk.eyJ1IjoidHJpZzBuIiwiYSI6ImNpeHJ3bWF3dzA2NGszM281czJhZWF5NGoifQ.w9yuisMiPtwMRv7u0WjgIQ'
-    }).addTo(map);
-
-    $.post("/api/search", {"currentPosition": currentPosition, "table": $('#tableDropdown').text(), "filters": [], "radius": "20km", "maxPositions": 10}, success=function (data) {
-        buildTable("searchResultTable", data["columns"], data["rows"]);
-        setMarkers(map, data["rows"]);
-    }, "json");
+    tableChosen({innerText: "bluetooth_classic"});
+    let map = buildMap();
 </script>
 {% endblock %}

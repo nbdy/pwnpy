@@ -1,6 +1,28 @@
+let mapMarkers = [];
+
+function addMapMarker(lnglat, data) {
+    let m = L.marker(lnglat, {"title": data});
+    m.bindPopup(data).openPopup();
+    m.addTo(map);
+    mapMarkers.push(m);
+}
+
+function clearMapMarkers(){
+    for(let i=0; i<mapMarkers.length; i++){
+        map.removeLayer(mapMarkers[i]);
+    }
+}
+
 function tableChosen(ctx) {
-    $.getJSON("/api/columns/" + $('#tableDropdown').text(), null, function (data) {
-        console.log(data);
+    $.getJSON("/api/columns/" + ctx.innerText, null, function (data) {
+        let content = "";
+        for(let col in data) {
+            content += '<a class="dropdown-item" href="#">' + data[col] + '</a>';
+        }
+        $('#columnDropdownMenu').html(content);
+        $('#columnDropdown').text(data[0]);
+        $('#tableDropdown').text(ctx.innerText);
+        search();
     });
 }
 
@@ -27,15 +49,32 @@ function buildTable(divId, keys, rows) {
     $('#' + divId).html(tableData);
 }
 
-function setMarkers(map, rows) {
-    let m;
+function setPopups(map, rows) {
+    clearMapMarkers();
     for(let row in rows){
         for(let pos in rows[row]["positions"]){
             console.log(rows[row]);
-            m = L.marker([rows[row]["positions"][pos]["latitude"], rows[row]["positions"][pos]["longitude"]], {
-                "title": rows[row]["name"] + "\n" + rows[row]["address"]
-            });
-            m.addTo(map);
+            addMapMarker([rows[row]["positions"][pos]["latitude"], rows[row]["positions"][pos]["longitude"]],
+                rows[row]["name"] + "\n" + rows[row]["address"]);
         }
     }
+}
+
+function search(){
+    $.post("/api/search", {"currentPosition": currentPosition, "table": $('#tableDropdown').text(), "filters": [], "radius": "20km", "maxPositions": 10}, success=function (data) {
+        buildTable("searchResultTable", data["columns"], data["rows"]);
+        setPopups(map, data["rows"]);
+    }, "json");
+}
+
+function buildMap() {
+    let m = L.map('map');
+    m.setView(currentPosition, 13);
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: 'mapbox.streets',
+        accessToken: 'pk.eyJ1IjoidHJpZzBuIiwiYSI6ImNpeHJ3bWF3dzA2NGszM281czJhZWF5NGoifQ.w9yuisMiPtwMRv7u0WjgIQ'
+    }).addTo(m);
+    return m;
 }

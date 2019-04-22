@@ -165,17 +165,7 @@ class Database(object):
             return []
         return self._execute(self.query_get_all % table, False, True)
 
-    def search(self, query):
-        cn = self.get_column_names(query["table"])
-        r = {
-            "columns": cn,
-            "rows": []
-        }
-        qry = "SELECT * FROM " + query["table"]
-        if "filters" in query.keys():
-            for f in query["filters"]:
-                qry += f["column"] + "='" + f["value"] + "'"
-        r["rows"] = self._execute(qry, fetchall=True)
+    def _search_bluetooth_classic(self, r, query):
         i = 0
         while i < len(r["rows"]):
             positions = []
@@ -190,16 +180,57 @@ class Database(object):
                     "speed": pos[3],
                     "timestamp": pos[4].strftime(DATETIME_FORMAT)
                 })
-            row = {}
-            if query["table"] == "bluetooth_classic":
-                row = {
-                    "address": r["rows"][i][0],
-                    "name": r["rows"][i][1],
-                    "positions": positions
-                }
+            row = {
+                "address": r["rows"][i][0],
+                "name": r["rows"][i][1],
+                "positions": positions
+            }
             r["rows"][i] = row
             i += 1
-        print r
+        return r
+
+    def _search_wifi(self, r, query):
+        positions = []
+        i = 0
+        while i < len(r["rows"]):
+            for p in r["rows"][i][-2]:
+                if len(positions) >= int(query["maxPositions"]):
+                    break
+                pos = self.get_position(p)
+                positions.append({
+                    "longitude": pos[0],
+                    "latitude": pos[1],
+                    "altitude": pos[2],
+                    "speed": pos[3],
+                    "timestamp": pos[4].strftime(DATETIME_FORMAT)
+                })
+            print r["rows"][i]
+            row = {
+                "address": r["rows"][i][0],
+                "name": r["rows"][i][1],
+                "positions": positions
+            }
+            r["rows"][i] = row
+            i += 1
+        return r
+
+    def search(self, query):
+        cn = self.get_column_names(query["table"])
+        r = {
+            "columns": cn,
+            "rows": []
+        }
+        qry = "SELECT * FROM " + query["table"]
+        if "filters" in query.keys():
+            for f in query["filters"]:
+                qry += f["column"] + "='" + f["value"] + "'"
+        print qry
+        r["rows"] = self._execute(qry, fetchall=True)
+        if query["table"] == "bluetooth_classic":
+            r = self._search_bluetooth_classic(r, query)
+        elif query["table"] == "wifi":
+            r = self._search_wifi(r, query)
+        print r["rows"]
         return r
 
     query_get_position = """SELECT * FROM positions WHERE time='%s';"""
