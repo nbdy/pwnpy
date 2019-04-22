@@ -1,6 +1,8 @@
 import psycopg2
 from json import dumps, loads
 
+DATETIME_FORMAT = "'%Y-%m-%dT%H:%M:%S.%f'"
+
 
 class Database(object):
     cn = None
@@ -36,15 +38,24 @@ class Database(object):
         return r
 
     @staticmethod
-    def _check_table_valid(table):
-        return table in ["bluetooth_classic", "bluetooth_le", "manager", "positions", "wifi"]
+    def _build_array(items, delimiter=','):
+        r = "{"
+        for item in items:
+            r += item + delimiter
+        r = r[0:-1]
+        r += '}'
+        r = r.replace("'", "")
+        return r
+
+    def _check_table_valid(self, table):
+        return table in self.get_table_names()
 
     query_position_insert = """INSERT INTO positions (longitude, latitude, altitude, speed, time) VALUES 
-    ('%s', '%s', '%s', '%s', '%s');"""
+    ('%s', '%s', '%s', '%s', %s);"""
 
     def update_position(self, position):
         self._execute(self.query_position_insert % (position.longitude, position.latitude, position.altitude,
-                                                    position.speed, position.time), True)
+                                                    position.speed, position.time.strftime(DATETIME_FORMAT)), True)
 
     query_position_get_newest = """SELECT * FROM positions ORDER BY time DESC LIMIT 1;"""
 
@@ -154,6 +165,51 @@ class Database(object):
             return []
         return self._execute(self.query_get_all % table, False, True)
 
+    def search(self, query):
+        cn = self.get_column_names(query["table"])
+        r = {
+            "columns": cn,
+            "rows": []
+        }
+        qry = "SELECT * FROM " + query["table"]
+        if "filters" in query.keys():
+            for f in query["filters"]:
+                qry += f["column"] + "='" + f["value"] + "'"
+        r["rows"] = self._execute(qry, fetchall=True)
+        i = 0
+        while i < len(r["rows"]):
+            positions = []
+            for p in r["rows"][i][-1]:
+                if len(positions) >= int(query["maxPositions"]):
+                    break
+                pos = self.get_position(p)
+                positions.append({
+                    "longitude": pos[0],
+                    "latitude": pos[1],
+                    "altitude": pos[2],
+                    "speed": pos[3],
+                    "timestamp": pos[4].strftime(DATETIME_FORMAT)
+                })
+            row = {}
+            if query["table"] == "bluetooth_classic":
+                row = {
+                    "address": r["rows"][i][0],
+                    "name": r["rows"][i][1],
+                    "positions": positions
+                }
+            r["rows"][i] = row
+            i += 1
+        print r
+        return r
+
+    query_get_position = """SELECT * FROM positions WHERE time='%s';"""
+
+    def get_newest_position(self):
+        return self._execute(self.query_get_position % self.get_newest_position_timestamp(), fetchone=True)
+
+    def get_position(self, timestamp):
+        return self._execute(self.query_get_position % timestamp, fetchone=True)
+
     def get_column_names(self, table):
         if not self._check_table_valid(table):
             return []
@@ -169,6 +225,62 @@ class Database(object):
             return ["address", "device_type", "channel", "encryption", "communication_partners", "essid", "positions",
                     "rates"]
         return []
+
+    @staticmethod
+    def get_table_names():
+        return ["bluetooth_classic", "bluetooth_le", "manager", "positions", "wifi"]
+
+    query_update_positions = """UPDATE %s SET positions = '%s' WHERE address = '%s';"""
+
+    def _update_timestamps(self):
+        table_names = ["bluetooth_classic", "bluetooth_le"]
+        for table_name in table_names:
+            qry = self.query_get_all % table_name
+            for i in self._execute(qry, fetchall=True):
+                addr = i[0]
+                positions = i[2]
+                new_positions = []
+                for position in positions:
+                    new_positions.append(position.strftime(DATETIME_FORMAT))
+                self._execute(self.query_update_positions % (table_name, self._build_array(new_positions),
+                                                             addr), True)
+
+    query_update_start = """UPDATE manager SET start = '%s' WHERE id = '%s';"""
+    query_update_end = """UPDATE manager SET end = '%s' WHERE id = '%s';"""
+
+    def _update_manager_timestamps(self):
+        rows = self._execute(self.query_get_all % "manager", fetchall=True)
+        for r in rows:
+            self._execute(self.query_update_start % (r[1].strftime(DATETIME_FORMAT), r[0]), True)
+            self._execute(self.query_update_end % (r[2].strftime(DATETIME_FORMAT), r[0]), True)
+
+    query_update_time = """UPDATE positions SET time = '%s' WHERE time = %s;"""
+
+    def _update_position_time(self):
+        rows = self._execute(self.query_get_all % "positions", fetchall=True)
+        for r in rows:
+            self._execute(self.query_update_time % (r[-1], r[-1].strftime(DATETIME_FORMAT)), True)
+
+    query_update_wifi_positions = """UPDATE wifi SET positions='%s' WHERE address='%s';"""
+
+    def _update_wifi_positions(self):
+        rows = self._execute(self.query_get_all % "wifi", fetchall=True)
+        for r in rows:
+            positions = r[-2]
+            new_positions = []
+            for position in positions:
+                new_positions.append(position.strftime(DATETIME_FORMAT))
+            self._execute(self.query_update_wifi_positions % (self._build_array(new_positions), r[0]), True)
+
+    def timestamp_migration(self):
+        print "[database] migrating bluetooth timestamps"
+        self._update_timestamps()
+        print "[database] migrating manger start stop timestamps"
+        self._update_manager_timestamps()
+        print "[database] migrating positions timestamps"
+        self._update_position_time()
+        print "[database] migrating wifi timestamps"
+        self._update_wifi_positions()
 
 
 if __name__ == '__main__':

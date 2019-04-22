@@ -18,7 +18,7 @@
     "reCounterMax": 5
   },
   "gps": {
-    "enable": false,
+    "enable": true,
     "sleepTime": 1,
     "reCounterMax": 5
   },
@@ -38,6 +38,7 @@
     "enable": true,
     "host": "0.0.0.0",
     "port": 1337,
-    "threaded": true
+    "threaded": true,
+    "defaultPosition": [49.460983, 11.061859]
   }
 }

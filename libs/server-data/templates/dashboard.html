@@ -30,12 +30,14 @@
             <input type="text" class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" placeholder="column name">
         </form>
     </div>
+    <div id="searchResultTable" class="container">
+
+    </div>
 </div>
 &nbsp;
 <div id="map" class="container"></div>
 <script>
-    let currentPosition = [48.137222, 11.575556];
-    // let currentPosition = {{ currentPosition }};
+    let currentPosition = {{ currentPosition }};
 
     let map = L.map('map');
     map.setView(currentPosition, 13);
@@ -47,6 +49,9 @@
         accessToken: 'pk.eyJ1IjoidHJpZzBuIiwiYSI6ImNpeHJ3bWF3dzA2NGszM281czJhZWF5NGoifQ.w9yuisMiPtwMRv7u0WjgIQ'
     }).addTo(map);
 
-    $.post("")
+    $.post("/api/search", {"currentPosition": currentPosition, "table": $('#tableDropdown').text(), "filters": [], "radius": "20km", "maxPositions": 10}, success=function (data) {
+        buildTable("searchResultTable", data["columns"], data["rows"]);
+        setMarkers(map, data["rows"]);
+    }, "json");
 </script>
 {% endblock %}
