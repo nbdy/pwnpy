@@ -207,8 +207,41 @@ class Database(object):
             print r["rows"][i]
             row = {
                 "address": r["rows"][i][0],
+                "device_type": r["rows"][i][1],
+                "channel": r["rows"][2],
+                "encryption": r["rows"][3],
+                "communication_partners": r["rows"][4],
+                "essid": r["rows"][5],
+                "positions": positions,
+                "rates": r["rows"][7]
+            }
+            r["rows"][i] = row
+            i += 1
+        return r
+
+    def _search_bluetooth_le(self, r, query):
+        positions = []
+        i = 0
+        while i < len(r["rows"]):
+            for p in r["rows"][i][2]:
+                if len(positions) >= int(query["maxPositions"]):
+                    break
+                pos = self.get_position(p)
+                positions.append({
+                    "longitude": pos[0],
+                    "latitude": pos[1],
+                    "altitude": pos[2],
+                    "speed": pos[3],
+                    "timestamp": pos[4].strftime(DATETIME_FORMAT)
+                })
+            print r["rows"][i]
+            row = {
+                "address": r["rows"][i][0],
                 "name": r["rows"][i][1],
-                "positions": positions
+                "positions": positions,
+                "rssi": r["rows"][i][3],
+                "connectable": r["rows"][i][4],
+                "advertisements": len(r["rows"][i][5])
             }
             r["rows"][i] = row
             i += 1
@@ -230,6 +263,8 @@ class Database(object):
             r = self._search_bluetooth_classic(r, query)
         elif query["table"] == "wifi":
             r = self._search_wifi(r, query)
+        elif query["table"] == "bluetooth_le":
+            r = self._search_bluetooth_le(r, query)
         print r["rows"]
         return r
 
