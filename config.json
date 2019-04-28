@@ -6,7 +6,9 @@
     "enable": false,
     "reCounterMax": 5,
     "packetsPerChannel": 10,
-    "timeoutPerChannel": 3
+    "timeoutPerChannel": 3,
+    "deauth": false,
+    "capturedHandshakesPath": "hs/"
   },
   "bluetooth": {
     "interface": "hci0",
