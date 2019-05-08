@@ -312,7 +312,7 @@ class Database(object):
                                                              addr), True)
 
     query_update_start = """UPDATE manager SET start = '%s' WHERE id = '%s';"""
-    query_update_end = """UPDATE manager SET end = '%s' WHERE id = '%s';"""
+    query_update_end = """UPDATE manager SET "end" = '%s' WHERE id = '%s';"""
 
     def _update_manager_timestamps(self):
         rows = self._execute(self.query_get_all % "manager", fetchall=True)

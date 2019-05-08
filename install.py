@@ -47,6 +47,12 @@ class Setup(object):
                "sudo python setup.py install;"
                "cd /tmp/;"
                "rm -rf wifite2")
+        system("cd /tmp/;"
+               "git clone https://github.com/ZerBea/hcxtools;"
+               "cd hcxtools;"
+               "make; sudo make install;"
+               "cd /tmp/;"
+               "rm -rf hcxtools;")
         system("sudo pip install -r requirements.txt")
         system("sudo apt install postgresql -y")
         return True
