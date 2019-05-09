@@ -31,8 +31,6 @@ class BluetoothLEDevice(BluetoothDevice):
 
 
 class Bluetooth(IThread):
-    name = "bluetooth"
-
     def _on_run(self):
         self.do_run = geteuid() == 0 and self.cfg["enable"]  # dont need to try if we dont have rights
 

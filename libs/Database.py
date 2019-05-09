@@ -1,5 +1,5 @@
 import psycopg2
-from json import dumps, loads
+from json import dumps
 
 DATETIME_FORMAT = "'%Y-%m-%dT%H:%M:%S.%f'"
 
@@ -121,7 +121,7 @@ class Database(object):
     def wifi_device_update(self, device):
         r = self._execute("SELECT COUNT(1) FROM wifi WHERE address = '%s' AND communication_partners @> '{%s}';" % (
                           device.address, device.communication_partner), fetchall=True)[0][0]
-        if r != 0L:
+        if r != 0:
             tmp = "UPDATE wifi SET positions = array_append(positions, '%s') WHERE address='%s'" % (
                 self.get_newest_position_timestamp(), device.address)
         else:
@@ -204,7 +204,7 @@ class Database(object):
                     "speed": pos[3],
                     "timestamp": pos[4].strftime(DATETIME_FORMAT)
                 })
-            print r["rows"][i]
+            print(r["rows"][i])
             row = {
                 "address": r["rows"][i][0],
                 "device_type": r["rows"][i][1],
@@ -234,7 +234,7 @@ class Database(object):
                     "speed": pos[3],
                     "timestamp": pos[4].strftime(DATETIME_FORMAT)
                 })
-            print r["rows"][i]
+            print(r["rows"][i])
             row = {
                 "address": r["rows"][i][0],
                 "name": r["rows"][i][1],
@@ -257,7 +257,7 @@ class Database(object):
         if "filters" in query.keys():
             for f in query["filters"]:
                 qry += f["column"] + "='" + f["value"] + "'"
-        print qry
+        print(qry)
         r["rows"] = self._execute(qry, fetchall=True)
         if query["table"] == "bluetooth_classic":
             r = self._search_bluetooth_classic(r, query)
@@ -265,7 +265,7 @@ class Database(object):
             r = self._search_wifi(r, query)
         elif query["table"] == "bluetooth_le":
             r = self._search_bluetooth_le(r, query)
-        print r["rows"]
+        print(r["rows"])
         return r
 
     query_get_position = """SELECT * FROM positions WHERE time='%s';"""
@@ -339,13 +339,13 @@ class Database(object):
             self._execute(self.query_update_wifi_positions % (self._build_array(new_positions), r[0]), True)
 
     def timestamp_migration(self):
-        print "[database] migrating bluetooth timestamps"
+        print("[database] migrating bluetooth timestamps")
         self._update_timestamps()
-        print "[database] migrating manger start stop timestamps"
+        print("[database] migrating manger start stop timestamps")
         self._update_manager_timestamps()
-        print "[database] migrating positions timestamps"
+        print("[database] migrating positions timestamps")
         self._update_position_time()
-        print "[database] migrating wifi timestamps"
+        print("[database] migrating wifi timestamps")
         self._update_wifi_positions()
 
 

@@ -1,13 +1,11 @@
 from json import load
 from time import sleep
 from datetime import datetime
+from importlib import import_module
 
 from libs import T
-from libs.Bluetooth import Bluetooth
-from libs.Database import Database
 from libs.GPS import GPS
-from libs.WiFi import WiFi
-from libs.Server import Server
+from libs.Database import Database
 
 
 class NoConfigurationSuppliedException(Exception):
@@ -16,14 +14,13 @@ class NoConfigurationSuppliedException(Exception):
 
 class Manager(T):
     daemon = False
-    name = "manager"
     cfg = None
 
     db = None
     gps = None
-    wifi = None
-    server = None
-    bluetooth = None
+
+    modules = []
+    running_modules = []
 
     reCounter = {}
 
@@ -31,55 +28,63 @@ class Manager(T):
 
     def __init__(self, cfg):
         T.__init__(self)
-        self.cfg = load(open(cfg))
+        self.cfg = load(open(cfg))["Manager"]
         self.do_run = True
-        self.timestamp_start = datetime.now()  # todo insert start and stop timestamp into database upon shutdown
+        self.timestamp_start = datetime.now()
+        self.db = Database(self.cfg["Database"])
+        self.gps = GPS(self.db, self.cfg["GPS"])
+        self._load_modules()
 
-        self.db = Database(self.cfg["database"])
-        self.gps = GPS(self.db, self.cfg["gps"])
-        self.wifi = WiFi(self.db, self.cfg["wifi"])
-        self.server = Server(self.db, self.cfg["server"])
-        self.bluetooth = Bluetooth(self.db, self.cfg["bluetooth"])
+    def _load_modules(self):
+        for k, v in self.cfg["modules"].items():
+            self._log("loading module: '%s'" % k)
+            self.modules.append(getattr(import_module("libs." + k), k))
+
+    def _start_modules(self):
+        for m in self.modules:
+            self._log("starting module: '%s'" % m.__name__)
+            self.running_modules.append(m(self.db, self.cfg["modules"][m.__name__]))
+
+    def _stop_modules(self):
+        for m in self.running_modules:
+            m.stop()
+
+    def _find_module(self, name):
+        for m in self.modules:
+            if m.name == name:
+                return m
+        return None
 
     def _on_run(self):
-        self.server.start()
         self.gps.start()
-        if self.cfg["manager"]["waitForPosition"] and self.cfg["gps"]["enable"]:
+        if self.cfg["waitForPosition"] and self.cfg["GPS"]["enable"]:
             while not self.gps.cP:
-                print "waiting for gps"
+                self._log("waiting for gps")
                 sleep(1)
-        self.wifi.start()
-        self.bluetooth.start()
-
-    def __restart_service(self, srv, name):
-        if not self.cfg[name]["enable"]:
-            return
-        if name not in self.reCounter.keys():
-            self.reCounter[name] = 0
-        if not srv.do_run and self.cfg[name]["reCounterMax"] >= self.reCounter[name]:
-            if name == "gps":
-                self.gps = GPS(self.db, self.cfg[name])
-            elif name == "wifi":
-                self.wifi = WiFi(self.db, self.cfg[name])
-            elif name == "bluetooth":
-                self.bluetooth = Bluetooth(self.db, self.cfg[name])
-            self.reCounter[name] += 1
+        self._start_modules()
 
     def check_cleanshutd_pipe(self):
-        if open(self.cfg["manager"]["cleanshutdPipe"]).read() == '1':
+        if open(self.cfg["cleanshutdPipe"]).read() == '1':
             self.db.manager_run_insert(self.timestamp_start, datetime.now())
             self.stop()
 
+    def _restart_modules(self):
+        for m in self.running_modules:
+            if not m.do_run:
+                n = m.__name__
+                self.running_modules.remove(m)
+                if n is not None:
+                    self._log("restarting: '%s'" % n)
+                    self.running_modules.append(self._find_module(n)(self.db, self.cfg["modules"][n.__name__]))
+                else:
+                    self._log("could not restart '%s'" % n)
+
     def _work(self):
-        if self.cfg["manager"]["cleanshutdEnable"]:
+        if self.cfg["cleanshutdEnable"]:
             self.check_cleanshutd_pipe()
-        self.__restart_service(self.gps, "gps")
-        self.__restart_service(self.wifi, "wifi")
-        self.__restart_service(self.bluetooth, "bluetooth")
-        sleep(self.cfg["manager"]["sleepTime"])
+        self._restart_modules()
+        sleep(self.cfg["sleepTime"])
 
     def _on_stop(self):
-        self.server.stop()
-        self.wifi.stop()
-        self.bluetooth.stop()
-        self.gps.stop()
+        self._stop_modules()
+        self.stop()

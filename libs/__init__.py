@@ -2,7 +2,6 @@ from threading import Thread
 
 
 class T(Thread):
-    name = "default"
     daemon = True
     do_run = False
 
@@ -15,23 +14,29 @@ class T(Thread):
     def _on_run(self):
         pass
 
+    def _on_end(self):
+        self._log("stopped")
+        self.stop()
+
     def _on_stop(self):
-        pass
+        self.stop()
+
+    def _log(self, msg):
+        print("[" + self.__class__.__name__ + "] " + msg)
 
     def run(self):
-        print "[" + self.name + "] running"
+        self._log("running")
         self._on_run()
         while self.do_run:
             self._work()
+        self._on_end()
 
     def stop(self):
-        print "[" + self.name + "] stopping"
+        self._log("stopping")
         self.do_run = False
-        self._on_stop()
 
 
 class IThread(T):
-    name = "scanner"
     db = None
     cfg = None
 

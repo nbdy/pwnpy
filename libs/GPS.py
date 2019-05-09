@@ -24,8 +24,7 @@ class GPS(IThread):
     client = None
     cP = None
 
-    def __init__(self, db, cfg):
-        IThread.__init__(self, db, cfg)
+    def _on_run(self):
         self.client = gps.gps(mode=gps.WATCH_ENABLE | gps.WATCH_JSON)
 
     @staticmethod
