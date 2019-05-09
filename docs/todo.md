@@ -1,6 +1,6 @@
 ### todo:
 ```
 - device timeline
-- intrusive stuff
-- error logging
+- better logging
+- ui stuff
 ```

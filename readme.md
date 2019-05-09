@@ -1,8 +1,8 @@
 ## pwnpy
-wardriving tool written to run on a raspberry pi zero with the [LiPo SHIM](https://shop.pimoroni.com/products/lipo-shim). <br>
-
-you might also want to use [this](https://github.com/smthnspcl/clean-shutdown). <br>
-this way we can tell pwnpy to stop and save start and stop timestamps
+wardriving tool written to run on a raspberry pi 
+- zero with the [LiPo SHIM](https://shop.pimoroni.com/products/lipo-shim) <br>
+    - you might want to use [this](https://github.com/smthnspcl/clean-shutdown)
+- 2/3 with a touchscreen
 
 ### docs (how to..):
 - [setup](https://github.com/smthnspcl/pwnpy/tree/master/docs/setup.md) - ..set it up
