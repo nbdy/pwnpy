@@ -1,4 +1,5 @@
 from threading import Thread
+from os import geteuid
 
 
 class T(Thread):
@@ -45,3 +46,5 @@ class IThread(T):
         self.db = db
         self.cfg = cfg
         self.do_run = self.cfg["enable"]
+        if self.cfg["root"]:
+            self.do_run = geteuid() == 0

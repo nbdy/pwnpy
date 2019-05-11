@@ -32,7 +32,7 @@ class BluetoothLEDevice(BluetoothDevice):
 
 class Bluetooth(IThread):
     def _on_run(self):
-        self.do_run = geteuid() == 0 and self.cfg["enable"]  # dont need to try if we dont have rights
+        pass
 
     def scan_classic(self):
         devs = discover_devices(duration=self.cfg["classicScanTime"], lookup_names=True)

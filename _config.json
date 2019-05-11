@@ -20,6 +20,13 @@
   },
 
   "modules": {
+    "UI": {
+      "enable": false,
+      "width": 720,
+      "height": 480,
+      "fps": 60,
+      "root": false
+    },
     "WiFi": {
       "autoInterface": false,
       "interface": "wlan0mon",

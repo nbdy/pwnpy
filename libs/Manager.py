@@ -28,7 +28,7 @@ class Manager(T):
 
     def __init__(self, cfg):
         T.__init__(self)
-        self.cfg = load(open(cfg))["Manager"]
+        self.cfg = load(open(cfg))
         self.do_run = True
         self.timestamp_start = datetime.now()
         self.db = Database(self.cfg["Database"])

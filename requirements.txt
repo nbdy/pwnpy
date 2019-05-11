@@ -6,3 +6,5 @@ netifaces
 psycopg2
 flask
 werkzeug
+raylib-py
+scapy
