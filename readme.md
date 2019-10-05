@@ -1,4 +1,7 @@
 ## pwnpy
+
+[![Build Status](http://build.eberlein.io:8080/job/pwnpy/badge/icon)](http://build.eberlein.io:8080/job/pwnpy/)<br>
+
 wardriving tool written to run on a raspberry pi 
 - zero with the [LiPo SHIM](https://shop.pimoroni.com/products/lipo-shim) <br>
     - you might want to use [this](https://github.com/smthnspcl/clean-shutdown)
