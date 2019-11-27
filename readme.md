@@ -1,6 +1,6 @@
 ## pwnpy
 
-[![Build Status](http://build.eberlein.io:8080/job/pwnpy/badge/icon)](http://build.eberlein.io:8080/job/pwnpy/)<br>
+[![Build Status](http://build.eberlein.io:8080/job/python_pwnpy/badge/icon)](http://build.eberlein.io:8080/job/python_pwnpy/)<br>
 
 wardriving tool written to run on a raspberry pi 
 - zero with the [LiPo SHIM](https://shop.pimoroni.com/products/lipo-shim) <br>
