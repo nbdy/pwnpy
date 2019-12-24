@@ -1,12 +1,13 @@
 from flask import render_template, Flask, make_response, request
 
-from libs import IThread
+from libs.Module import Module
 from json import dumps
 
 # todo authentication
 
 
-class Server(IThread):
+class Server(Module):
+    name = "server"
     app = None
 
     @staticmethod

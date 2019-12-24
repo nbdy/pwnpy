@@ -4,7 +4,7 @@ from scapy.all import *
 from subprocess import Popen, PIPE
 from time import sleep
 
-from libs import IThread
+from libs.Module import Module
 
 
 conf.verb = 0
@@ -90,7 +90,7 @@ class WiFiSTADevice(WiFiDevice):
 BROADCAST = "ff:ff:ff:ff:ff:ff"
 
 
-class WiFi(IThread):
+class WiFi(Module):
     packets = []
 
     def __wifi_callback(self, pkt):

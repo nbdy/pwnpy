@@ -1,7 +1,7 @@
 from datetime import datetime
 import gps
 
-from libs import IThread
+from libs.Module import Module
 
 
 class Position(object):
@@ -19,7 +19,7 @@ class Position(object):
         self.time = datetime.now()
 
 
-class GPS(IThread):
+class GPS(Module):
     name = "gps"
     client = None
     cP = None
@@ -38,4 +38,4 @@ class GPS(IThread):
         new_data = self.client.next()
         if self._check_data(new_data, ["lon", "lat", "alt", "speed"]):
             self.cP = Position(new_data)
-            self.db.update_position(self.cP)
+            self.save(self.cP)

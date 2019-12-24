@@ -4,7 +4,6 @@ from datetime import datetime
 from importlib import import_module
 
 from libs import T
-from libs.GPS import GPS
 from libs.Database import Database
 
 
@@ -15,9 +14,9 @@ class NoConfigurationSuppliedException(Exception):
 class Manager(T):
     daemon = False
     cfg = None
+    name = "manager"
 
     db = None
-    gps = None
 
     modules = []
     running_modules = []
@@ -32,40 +31,52 @@ class Manager(T):
         self.do_run = True
         self.timestamp_start = datetime.now()
         self.db = Database(self.cfg["Database"])
-        self.gps = GPS(self.db, self.cfg["GPS"])
         self._load_modules()
 
     def _load_modules(self):
         for k, v in self.cfg["modules"].items():
-            self._log("loading module: '%s'" % k)
-            self.modules.append(getattr(import_module("libs." + k), k))
+            self.log_info("loading module: '%s'" % k)
+            self.modules.append(getattr(import_module("modules." + k), k))
 
     def _start_modules(self):
         for m in self.modules:
-            self._log("starting module: '%s'" % m.__name__)
-            self.running_modules.append(m(self.db, self.cfg["modules"][m.__name__]))
+            self.log_info("starting module: '%s'" % m.name)
+            if m in self.cfg["modules"].keys():
+                self.running_modules.append(m(self.db, self.cfg["modules"][m.name]))
+            else:
+                self.log_error("there was no config specified for '%s'." % m.name)
 
     def _stop_modules(self):
         for m in self.running_modules:
             m.stop()
 
-    def _find_module(self, name):
-        for m in self.modules:
-            if m.name == name:
+    @staticmethod
+    def _find_by_name(key, value, lst):
+        for m in lst:
+            if m.__dict__[key] == value:
                 return m
         return None
 
+    def _find_running_module(self, name):
+        return self._find_by_name("name", name, self.running_modules)
+
+    def _find_module(self, name):
+        return self._find_by_name("name", name, self.modules)
+
     def _on_run(self):
-        self.gps.start()
         if self.cfg["waitForPosition"] and self.cfg["GPS"]["enable"]:
-            while not self.gps.cP:
-                self._log("waiting for gps")
+            gps = self._find_running_module("gps")
+            while not gps.cP:
+                self.log_debug("waiting for gps.")
                 sleep(1)
         self._start_modules()
 
     def check_cleanshutd_pipe(self):
         if open(self.cfg["cleanshutdPipe"]).read() == '1':
-            self.db.manager_run_insert(self.timestamp_start, datetime.now())
+            self.db.insert(self.name, {
+                "start": self.timestamp_start,
+                "end": datetime.now()
+            })
             self.stop()
 
     def _restart_modules(self):
@@ -74,10 +85,10 @@ class Manager(T):
                 n = m.__name__
                 self.running_modules.remove(m)
                 if n is not None:
-                    self._log("restarting: '%s'" % n)
+                    self.log_info("restarting module: '%s'" % m.name)
                     self.running_modules.append(self._find_module(n)(self.db, self.cfg["modules"][n.__name__]))
                 else:
-                    self._log("could not restart '%s'" % n)
+                    self.log_error("could not restart module '%s'." % m.name)
 
     def _work(self):
         if self.cfg["cleanshutdEnable"]:

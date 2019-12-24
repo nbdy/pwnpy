@@ -1,5 +1,6 @@
 from threading import Thread
 from os import geteuid
+from libs.Log import Log
 
 
 class T(Thread):
@@ -13,27 +14,34 @@ class T(Thread):
         pass
 
     def _on_run(self):
-        pass
+        self.log_info("running")
 
     def _on_end(self):
-        self._log("stopped")
-        self.stop()
+        self.log_info("stopped")
 
     def _on_stop(self):
-        self.stop()
+        self.log_info("stopping")
 
-    def _log(self, msg):
-        print("[" + self.__class__.__name__ + "] " + msg)
+    def log_debug(self, message):
+        Log.d(self.name, message)
+
+    def log_info(self, message):
+        Log.i(self.name, message)
+
+    def log_error(self, message):
+        Log.e(self.name, message)
+
+    def start(self):
+        self.run()
 
     def run(self):
-        self._log("running")
         self._on_run()
         while self.do_run:
             self._work()
         self._on_end()
 
     def stop(self):
-        self._log("stopping")
+        self._on_stop()
         self.do_run = False
 
 
@@ -45,6 +53,7 @@ class IThread(T):
         T.__init__(self)
         self.db = db
         self.cfg = cfg
+        self.name = cfg["name"]
         self.do_run = self.cfg["enable"]
         if self.cfg["root"]:
             self.do_run = geteuid() == 0

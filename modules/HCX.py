@@ -1,7 +1,7 @@
-from . import IThread
+from libs.Module import Module
 
 
-class HCX(IThread):
+class HCX(Module):
     def _on_run(self):
         pass
 

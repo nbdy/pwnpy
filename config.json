@@ -1,26 +1,23 @@
 {
   "sleepTime": 3,
-  "waitForPosition": true,
+  "waitForPosition": false,
   "cleanshutdEnable": false,
   "cleanshutdPipe": "/tmp/cleanshutd",
 
   "Database": {
-    "host": "localhost",
-    "database": "pwnpi",
-    "user": "postgres",
-    "password": "postgres",
-    "root": false
-  },
-
-  "GPS": {
-    "enable": true,
-    "sleepTime": 1,
-    "reCounterMax": 5,
-    "root": false
+    "schema": "sqlite:///pwnpy.db"
   },
 
   "modules": {
+    "GPS": {
+      "name": "gps",
+      "enable": false,
+      "sleepTime": 1,
+      "reCounterMax": 5,
+      "root": false
+    },
     "WiFi": {
+      "name": "wifi",
       "autoInterface": false,
       "interface": "wlan0mon",
       "promiscuous": true,
@@ -32,12 +29,14 @@
       "root": true
     },
     "HCX": {
+      "name": "hcx",
       "interface": "wlan1mon",
       "enable": true,
       "output": "hcxdumps/",
       "root": true
     },
     "Bluetooth": {
+      "name": "bluetooth",
       "interface": "hci0",
       "onlyLE": false,
       "onlyClassic": false,
@@ -48,6 +47,7 @@
       "root": true
     },
     "Server": {
+      "name": "server",
       "enable": true,
       "host": "0.0.0.0",
       "port": 1337,
