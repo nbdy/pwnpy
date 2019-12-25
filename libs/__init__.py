@@ -75,7 +75,9 @@ class IThread(T):
         self.db.insert(self.name, data)
 
     def should_restart(self):
-        return self.stop_reason != StopReasons.FATAL
+        r = self.stop_reason != StopReasons.FATAL
+        self.log_debug("should restart: '%s'" % r)
+        return r
 
     def stop_fatal(self, msg):
         self.log_error(msg)

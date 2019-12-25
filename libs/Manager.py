@@ -91,19 +91,23 @@ class Manager(T):
             self.stop()
 
         for m in self.running_modules:
-            if not m.do_run and m.should_restart():
-                n = m.name
-                self.running_modules.remove(m)
-                if n is not None:
-                    self.log_info("restarting module: '%s'" % n)
-                    self.running_modules.append(self._find_instantiate(n))
+            self.log_debug("'%s' is running? '%s'" % (m.name, m.do_run))
+            if not m.do_run:
+                self.log_debug("'%s' has been stopped because of '%s'" % (m.name, m.stop_message))
+                self.log_debug("'%s' stop reason was '%i'" % (m.name, m.stop_reason))
+                if m.should_restart():
+                    n = m.name
+                    self.running_modules.remove(m)
+                    if n is not None:
+                        self.log_info("restarting module: '%s'" % n)
+                        self.running_modules.append(self._find_instantiate(n))
+                    else:
+                        self.log_error("could not restart module '%s'." % m.name)
                 else:
-                    self.log_error("could not restart module '%s'." % m.name)
-            else:
-                self.log_error("not restarting module '%s' because of '%s'" % (m.name, m.stop_message))
-                self.modules.remove(m.__class__)
-                self.running_modules.remove(m)
-                self.log_info("removed module '%s'" % m.name)
+                    self.log_error("not restarting module '%s' because of '%s'" % (m.name, m.stop_message))
+                    self.modules.remove(m.__class__)
+                    self.running_modules.remove(m)
+                    self.log_info("removed module '%s'" % m.name)
 
     def _work(self):
         if self.cfg["cleanshutdEnable"]:
