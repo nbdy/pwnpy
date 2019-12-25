@@ -1,20 +1,32 @@
 from loguru import logger
-
-logger.add("log_{time}.log", rotation="500 MB", compression="bz2", enqueue=True, backtrace=True, diagnose=True)
+from os import makedirs
+from os.path import isdir
 
 
 class Log(object):
-    FMT = "[{module}]: {message}"
+    cfg = None
+    format = None
 
-    @staticmethod
-    def d(module, message):
-        logger.debug(Log.FMT, module, message)
+    def __init__(self, cfg, fmt="[{__module__}]: {__message__}"):
+        self.cfg = cfg
+        self.format = fmt
+        path = self.cfg["path"]
+        if not path.endswith("/"):
+            path += "/"
+        if not isdir(path):
+            makedirs(path)
+        logger.add(path + "log_{time}.log",
+                   rotation="500 MB",
+                   compression="bz2",
+                   enqueue=True,
+                   backtrace=True,
+                   diagnose=True)
 
-    @staticmethod
-    def i(module, message):
-        logger.info(Log.FMT, module, message)
+    def d(self, module, message):
+        logger.debug(self.format, __module__=module, __message__=message)
 
-    @staticmethod
-    def e(module, message):
-        logger.error(Log.FMT, module, message)
+    def i(self, module, message):
+        logger.info(self.format, __module__=module, __message__=message)
 
+    def e(self, module, message):
+        logger.error(self.format, __module__=module, __message__=message)

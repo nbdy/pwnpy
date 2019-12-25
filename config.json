@@ -8,16 +8,18 @@
     "schema": "sqlite:///pwnpy.db"
   },
 
+  "Log": {
+    "path": "log/"
+  },
+
   "modules": {
     "GPS": {
-      "name": "gps",
       "enable": false,
       "sleepTime": 1,
       "reCounterMax": 5,
       "root": false
     },
     "WiFi": {
-      "name": "wifi",
       "autoInterface": false,
       "interface": "wlan0mon",
       "promiscuous": true,
@@ -29,14 +31,12 @@
       "root": true
     },
     "HCX": {
-      "name": "hcx",
       "interface": "wlan1mon",
       "enable": true,
       "output": "hcxdumps/",
       "root": true
     },
     "Bluetooth": {
-      "name": "bluetooth",
       "interface": "hci0",
       "onlyLE": false,
       "onlyClassic": false,
@@ -47,13 +47,15 @@
       "root": true
     },
     "Server": {
-      "name": "server",
       "enable": true,
       "host": "0.0.0.0",
       "port": 1337,
       "threaded": true,
       "defaultPosition": [49.460983, 11.061859],
       "root": false
+    },
+    "UI": {
+      "enable": false
     }
   }
 }

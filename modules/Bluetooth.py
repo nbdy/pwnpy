@@ -1,7 +1,7 @@
 from bluepy.btle import Scanner as btleScanner
 from bluetooth import discover_devices
 
-from libs.Module import Module
+from libs import IThread
 
 
 class BluetoothDevice(object):
@@ -28,7 +28,7 @@ class BluetoothLEDevice(BluetoothDevice):
         self.connectable = connectable
 
 
-class Bluetooth(Module):
+class Bluetooth(IThread):
     def scan_classic(self):
         devs = discover_devices(duration=self.cfg["classicScanTime"], lookup_names=True)
         for addr, name in devs:

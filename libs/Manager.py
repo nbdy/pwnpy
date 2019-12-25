@@ -5,6 +5,7 @@ from importlib import import_module
 
 from libs import T
 from libs.Database import Database
+from libs.Log import Log
 
 
 class NoConfigurationSuppliedException(Exception):
@@ -14,54 +15,55 @@ class NoConfigurationSuppliedException(Exception):
 class Manager(T):
     daemon = False
     cfg = None
-    name = "manager"
-
+    log = None
     db = None
 
     modules = []
     running_modules = []
 
-    reCounter = {}
-
     timestamp_start = None
 
     def __init__(self, cfg):
-        T.__init__(self)
+        if cfg is None:
+            raise NoConfigurationSuppliedException
         self.cfg = load(open(cfg))
+        T.__init__(self, Log(self.cfg["Log"]))
         self.do_run = True
+        self.name = "Manager"
         self.timestamp_start = datetime.now()
         self.db = Database(self.cfg["Database"])
         self._load_modules()
 
     def _load_modules(self):
         for k, v in self.cfg["modules"].items():
-            self.log_info("loading module: '%s'" % k)
-            self.modules.append(getattr(import_module("modules." + k), k))
+            if v["enable"]:
+                self.log_info("loading module: '%s'" % k)
+                self.modules.append(getattr(import_module("modules." + k), k))
+            else:
+                self.log_debug("disabled module: '%s'" % k)
 
     def _start_modules(self):
-        for m in self.modules:
-            self.log_info("starting module: '%s'" % m.name)
-            if m in self.cfg["modules"].keys():
-                self.running_modules.append(m(self.db, self.cfg["modules"][m.name]))
-            else:
-                self.log_error("there was no config specified for '%s'." % m.name)
+        for k in self.cfg["modules"].keys():
+            if self.cfg["modules"][k]["enable"]:
+                self.log_info("starting module: '%s'" % k)
+                self.running_modules.append(self._find_instantiate(k))
 
     def _stop_modules(self):
         for m in self.running_modules:
             m.stop()
 
     @staticmethod
-    def _find_by_name(key, value, lst):
+    def _find_by_name(value, lst):
         for m in lst:
-            if m.__dict__[key] == value:
+            if m.__name__ == value:
                 return m
         return None
 
     def _find_running_module(self, name):
-        return self._find_by_name("name", name, self.running_modules)
+        return self._find_by_name(name, self.running_modules)
 
     def _find_module(self, name):
-        return self._find_by_name("name", name, self.modules)
+        return self._find_by_name(name, self.modules)
 
     def _on_run(self):
         if self.cfg["waitForPosition"] and self.cfg["GPS"]["enable"]:
@@ -79,23 +81,38 @@ class Manager(T):
             })
             self.stop()
 
+    def _find_instantiate(self, name):
+        return self._find_module(name)(name, self.db, self.log, self.cfg["modules"][name])
+
     def _restart_modules(self):
+        if len(self.modules) == 0:
+            self.log_error("no modules are loaded anymore")
+            self.log_info("exiting")
+            self.stop()
+
         for m in self.running_modules:
-            if not m.do_run:
-                n = m.__name__
+            if not m.do_run and m.should_restart():
+                n = m.name
                 self.running_modules.remove(m)
                 if n is not None:
-                    self.log_info("restarting module: '%s'" % m.name)
-                    self.running_modules.append(self._find_module(n)(self.db, self.cfg["modules"][n.__name__]))
+                    self.log_info("restarting module: '%s'" % n)
+                    self.running_modules.append(self._find_instantiate(n))
                 else:
                     self.log_error("could not restart module '%s'." % m.name)
+            else:
+                self.log_error("not restarting module '%s' because of '%s'" % (m.name, m.stop_message))
+                self.modules.remove(m.__class__)
+                self.running_modules.remove(m)
+                self.log_info("removed module '%s'" % m.name)
 
     def _work(self):
         if self.cfg["cleanshutdEnable"]:
             self.check_cleanshutd_pipe()
         self._restart_modules()
-        sleep(self.cfg["sleepTime"])
+        try:
+            sleep(self.cfg["sleepTime"])
+        except KeyboardInterrupt:
+            self.stop()
 
     def _on_stop(self):
         self._stop_modules()
-        self.stop()

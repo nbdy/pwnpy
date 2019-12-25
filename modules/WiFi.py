@@ -1,10 +1,12 @@
 from os import system, path, mkdir, listdir
 import netifaces
-from scapy.all import *
+from scapy.config import conf
+from scapy.layers.dot11 import *
+from scapy.layers.eap import EAPOL
 from subprocess import Popen, PIPE
 from time import sleep
 
-from libs.Module import Module
+from libs import IThread
 
 
 conf.verb = 0
@@ -90,7 +92,7 @@ class WiFiSTADevice(WiFiDevice):
 BROADCAST = "ff:ff:ff:ff:ff:ff"
 
 
-class WiFi(Module):
+class WiFi(IThread):
     packets = []
 
     def __wifi_callback(self, pkt):
@@ -115,29 +117,27 @@ class WiFi(Module):
             self.do_run = False
         if self.cfg["autoInterface"]:
             self.cfg["interface"] = self._find_wifi_interface()
-            print("[wifi] using interface:", self.cfg["interface"])
         if self.cfg["interface"] is None:
-            self.do_run = False
-            print("[wifi] dont have an interface")
+            self.stop_fatal("no interface")
             return
         if self.cfg["interface"] not in netifaces.interfaces():
-            print("[wifi] interface '%s' does not exist" % self.cfg["interface"])
-            self.do_run = False
+            self.stop_fatal("no such interface: '%s'" % self.cfg["interface"])
+            return
         if self.cfg["promiscuous"]:
             if not self.cfg["interface"].endswith("mon"):
-                system("airmon-ng start %s" % self.cfg["interface"])
+                system("airmon-ng start %s" % self.cfg["interface"])  # todo monstart helper for rpi and other devices
                 self.cfg["interface"] = "wlan0mon"
                 system("ifconfig %s up" % self.cfg["interface"])
         if self.cfg["channels"] is None:
             self.cfg["channels"] = range(1, 14)
-        print("[wifi] sniffing on channels %s" % ','.join(str(x) for x in self.cfg["channels"]))
+        self.log_info("sniffing on channels [%s]" % ','.join(str(x) for x in self.cfg["channels"]))
         if not path.isdir(self.cfg["hcx_output"]):
             if not self.cfg["hcx_output"].endswith("/"):
                 self.cfg["hcx_output"] = self.cfg["hcx_output"]
             mkdir(self.cfg["hcx_output"])
-            print("[wifi] created %s" % self.cfg["hcx_output"])
+            self.log_debug("created '%s'" % self.cfg["hcx_output"])
         if self.cfg["hcx_enable"]:
-            print("[wifi] capturing stuff to %s" % self.cfg["hcx_output"])
+            self.log_debug("capturing handshakes to '%s'" % self.cfg["hcx_output"])
 
     def hcxdumptool(self):
         of = self.cfg["hcx_output"] + str(len(listdir(self.cfg["hcx_output"]))) + ".pcapng"
@@ -149,7 +149,7 @@ class WiFi(Module):
 
     def _work(self):
         for c in self.cfg["channels"]:
-            print("sniffing on channel %i" % c)
+            self.log_debug("sniffing on channel %i" % c)
             system("iwconfig " + self.cfg["interface"] + " channel " + str(c))
             sniff(iface=self.cfg["interface"], prn=self.__wifi_callback, count=self.cfg["packetsPerChannel"],
                   timeout=self.cfg["timeoutPerChannel"], store=False, filter="type mgt")

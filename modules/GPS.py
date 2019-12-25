@@ -1,7 +1,7 @@
 from datetime import datetime
 import gps
 
-from libs.Module import Module
+from libs import IThread
 
 
 class Position(object):
@@ -19,8 +19,7 @@ class Position(object):
         self.time = datetime.now()
 
 
-class GPS(Module):
-    name = "gps"
+class GPS(IThread):
     client = None
     cP = None
 

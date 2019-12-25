@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from os import system, geteuid, getcwd
 from sys import argv
 

@@ -5,12 +5,11 @@ setup(
     long_description=open("readme.md", "r").read(),
     name="pwnpy",
     version="0.42",
-    description="python wardriving tool",
+    description="wardriving tool",
     author="Pascal Eberlein",
     author_email="pascal@eberlein.io",
     url="https://github.com/smthnspcl/pwnpy",
     classifiers=[
-        'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
         'License :: OSI Approved :: MIT License',
