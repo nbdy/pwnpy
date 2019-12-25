@@ -1,8 +1,8 @@
 from os import system, path, mkdir, listdir
 import netifaces
-from scapy.config import conf
 from scapy.layers.dot11 import *
 from scapy.layers.eap import EAPOL
+from scapy.all import conf
 from subprocess import Popen, PIPE
 from time import sleep
 
@@ -101,9 +101,9 @@ class WiFi(IThread):
             data = WiFiDevice.from_pkt(pkt)
             if data is not None:
                 if data[0].address.lower() != BROADCAST:
-                    self.db.wifi_device_insert(data[0])
+                    self.save(data[0])  # saving sender
                 if data[1].address.lower() != BROADCAST:
-                    self.db.wifi_device_insert(data[1])
+                    self.save(data[1])  # saving receiver
 
     @staticmethod
     def _find_wifi_interface():

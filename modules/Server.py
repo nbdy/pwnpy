@@ -1,7 +1,8 @@
-from flask import render_template, Flask, make_response, request
-
+from sanic import Sanic
+from sanic.response import json_dumps as dumps
+from jinja2 import Template
+from os import getcwd
 from libs import IThread
-from json import dumps
 
 # todo authentication
 
@@ -19,9 +20,10 @@ class Server(IThread):
         return r
 
     def _on_run(self):
-        if not self.do_run:
-            return
-        self.app = Flask(__name__, static_folder='./server-data/static', template_folder='./server-data/templates')
+        self.app = Sanic(self.name)
+        tpl_dir = getcwd() + "/" + self.cfg["data"]
+        if not tpl_dir.endswith("/"):
+            tpl_dir += "/"
 
         def dashboard():
             p = self.db.get_newest_position()
@@ -29,35 +31,42 @@ class Server(IThread):
                 p = self.cfg["defaultPosition"]
             else:
                 p = [p[1], p[0]]
-            return render_template("dashboard.html",
-                                   counts={
-                                       "bluetooth_classic": self.db.get_count("bluetooth_classic"),
-                                       "bluetooth_le": self.db.get_count("bluetooth_le"),
-                                       "positions": self.db.get_count("positions"),
-                                       "wifi": self.db.get_count("wifi")
-                                   },
-                                   currentPosition=p)
+            tpl = Template(tpl_dir + "dashboard.html")
+            return tpl.render(counts={
+                "bluetoothClassic": self.db.count("bluetoothClassic"),
+                "bluetoothLE": self.db.count("bluetoothLE"),
+                "wifi": self.db.count("wifi"),
+                "gps": self.db.count("gps")
+            }, currentPosition=p)
 
         @self.app.route("/")
-        def root():
+        async def root(req):
             return dashboard()
 
         @self.app.route("/*")
-        def catchall():
+        async def catchall(req):
             return dashboard()
 
         @self.app.route("/api/columns/<path:path>")
-        def api_column_names(path):
-            return make_response(dumps(self.db.get_column_names(path)))
+        async def api_column_names(req, path):
+            print(path)
+            return "column names"
 
         @self.app.route("/api/positions/<path:path>")
-        def api_positions(path):
-            return make_response(dumps(self.db.get_position(path)))
+        async def api_positions(path):
+            return "positions"
 
         @self.app.route("/api/search", methods=["POST"])
-        def api_search():
-            data = self.parse_parameters(request.get_data())
-            return make_response(dumps(self.db.search(data)))
+        def api_search(req):
+            return "search"
 
-    def _work(self):
-        self.app.run(self.cfg["host"], self.cfg["port"], False, threaded=self.cfg["threaded"])
+    def run(self):
+        if not self.do_run:
+            return
+        self._on_run()
+        self.log_info("listening on: '%s:%i'" % (self.cfg["host"], self.cfg["port"]))
+        self.app.run(self.cfg["host"],
+                     self.cfg["port"],
+                     threaded=self.cfg["threaded"],
+                     use_reloader=False,
+                     debug=True)  # sanic or flacon

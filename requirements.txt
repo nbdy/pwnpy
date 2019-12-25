@@ -4,8 +4,9 @@ pybluez
 pybluez[ble]
 netifaces
 psycopg2
-flask
+sanic
 werkzeug
 scapy
 loguru
 dataset
+jinja2

@@ -46,7 +46,7 @@ class Manager(T):
         for k in self.cfg["modules"].keys():
             if self.cfg["modules"][k]["enable"]:
                 self.log_info("starting module: '%s'" % k)
-                self.running_modules.append(self._find_instantiate(k))
+                self.running_modules.append(self._find_instantiate_run_ret(k))
 
     def _stop_modules(self):
         for m in self.running_modules:
@@ -81,6 +81,11 @@ class Manager(T):
             })
             self.stop()
 
+    def _find_instantiate_run_ret(self, name):
+        m = self._find_instantiate(name)
+        m.start()
+        return m
+
     def _find_instantiate(self, name):
         return self._find_module(name)(name, self.db, self.log, self.cfg["modules"][name])
 
@@ -100,7 +105,7 @@ class Manager(T):
                     self.running_modules.remove(m)
                     if n is not None:
                         self.log_info("restarting module: '%s'" % n)
-                        self.running_modules.append(self._find_instantiate(n))
+                        self.running_modules.append(self._find_instantiate_run_ret(n))
                     else:
                         self.log_error("could not restart module '%s'." % m.name)
                 else:

@@ -32,7 +32,7 @@ class Bluetooth(IThread):
     def scan_classic(self):
         devs = discover_devices(duration=self.cfg["classicScanTime"], lookup_names=True)
         for addr, name in devs:
-            self.save(BluetoothDevice(addr, name))  # todo read more
+            self.save_for("bluetoothClassic", BluetoothDevice(addr, name))  # todo read more
 
     def scan_btle(self):
         devs = btleScanner().scan(self.cfg["leScanTime"])
@@ -44,7 +44,7 @@ class Bluetooth(IThread):
                     "desc": desc,
                     "value": val
                 })
-            self.save(d)
+            self.save_for("bluetoothLE", d)
 
     def _work(self):
         if self.cfg["onlyClassic"] or not self.cfg["onlyLE"]:
