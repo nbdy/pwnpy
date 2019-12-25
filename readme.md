@@ -1,5 +1,5 @@
 ## pwnpy
-
+## currently not usable
 [![Build Status](http://build.eberlein.io:8080/job/python_pwnpy/badge/icon)](http://build.eberlein.io:8080/job/python_pwnpy/)<br>
 
 wardriving tool

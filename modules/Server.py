@@ -26,7 +26,7 @@ class Server(IThread):
             tpl_dir += "/"
 
         def dashboard():
-            p = self.db.get_newest_position()
+            p = self.db.get()
             if p is None:
                 p = self.cfg["defaultPosition"]
             else:
