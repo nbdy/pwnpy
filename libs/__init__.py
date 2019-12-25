@@ -56,8 +56,8 @@ class StopReasons(object):
 class IThread(T):
     db = None
     cfg = None
-    stop_reason = None
-    stop_message = None
+    stop_reason = 1  # todo fix
+    stop_message = "no reason"
 
     def __init__(self, name, db, log, cfg):
         T.__init__(self, log)
