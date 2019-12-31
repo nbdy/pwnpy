@@ -13,7 +13,7 @@ class Setup(object):
     @staticmethod
     def dependencies():
         system("sudo apt install libssl-dev libbluetooth-dev python python-dev python-pip tshark reaver aircrack-ng git"
-               " gpsd gpsd-clients libcurl4-openssl-dev libpcap-dev libpq-dev libglib2.0-dev -y")
+               " gpsd gpsd-clients libcurl4-openssl-dev libpcap-dev libglib2.0-dev -y")
         system("cd /tmp/;"
                "git clone https://github.com/secdev/scapy;"
                "cd scapy;"
@@ -48,14 +48,7 @@ class Setup(object):
                "sudo python setup.py install;"
                "cd /tmp/;"
                "rm -rf wifite2")
-        system("cd /tmp/;"
-               "git clone https://github.com/ZerBea/hcxtools;"
-               "cd hcxtools;"
-               "make; sudo make install;"
-               "cd /tmp/;"
-               "rm -rf hcxtools;")
         system("sudo pip install -r requirements.txt")
-        system("sudo apt install postgresql -y")
         return True
 
     @staticmethod
@@ -64,20 +57,20 @@ class Setup(object):
 
     @staticmethod
     def already_autostart_installed():
-        for l in Setup.read_autostart_file():
-            if l.startswith("python pwn.py"):
+        for line in Setup.read_autostart_file():
+            if line.startswith("python pwn.py"):
                 return True
         return False
 
     @staticmethod
     def install_autostart():
         lines = []
-        for l in Setup.read_autostart_file().split('\n'):
-            if "exit 0" not in l:
-                lines.append(l)
+        for line in Setup.read_autostart_file().split('\n'):
+            if "exit 0" not in line:
+                lines.append(line)
         with open(Setup.AUTOSTART_PATH, 'w') as o:
-            for l in lines:
-                o.write(l + '\n')
+            for line in lines:
+                o.write(line + '\n')
             o.write("/usr/bin/python " + getcwd() + "/pwn.py " + getcwd() + "/config.json &\n")
             o.write("exit 0")
         return True
@@ -86,9 +79,9 @@ class Setup(object):
     def uninstall_autostart():
         _o = Setup.read_autostart_file()
         with open(Setup.AUTOSTART_PATH, 'w') as o:
-            for l in _o.split("\n"):
-                if "pwn.py" not in l:
-                    o.write(l + "\n")
+            for line in _o.split("\n"):
+                if "pwn.py" not in line:
+                    o.write(line + "\n")
 
 
 def should_be_root():

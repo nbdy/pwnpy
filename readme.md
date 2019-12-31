@@ -19,6 +19,14 @@ wardriving tool
 ./pwn.py -c config.json
 ```
 
+#### ...install dependencies
+```
+pip3 install --upgrade -r requirements.txt
+```
+the bluetooth module depends on [pybt](https://github.com/smthnspcl/pybt)<br>
+most likely there will be issues with installing gattlib<br>
+follow the instructions in the pybt repo
+
 #### ...install it
 ```shell script
 usage: ./install.py {arguments}

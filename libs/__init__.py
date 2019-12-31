@@ -33,9 +33,6 @@ class T(Thread):
     def _on_stop(self):
         self.log_info("stopping")
 
-    def start(self):
-        self.run()
-
     def run(self):
         self._on_run()
         while self.do_run:
@@ -72,9 +69,15 @@ class IThread(T):
                 self.stop_reason = StopReasons.FATAL
 
     def save(self, data):
+        if not isinstance(data, dict):
+            data = data.__dict__
+        self.log_debug(data)
         self.db.insert(self.name, data)
 
     def save_for(self, table, data):
+        if not isinstance(data, dict):
+            data = data.__dict__
+        self.log_debug(data)
         self.db.insert(table, data)
 
     def should_restart(self):

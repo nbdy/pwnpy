@@ -1,6 +1,5 @@
-from sanic import Sanic
-from sanic.response import json_dumps as dumps
-from jinja2 import Template
+from sanic import Sanic, response
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 from os import getcwd
 from libs import IThread
 
@@ -9,6 +8,7 @@ from libs import IThread
 
 class Server(IThread):
     app = None
+    env = None
 
     @staticmethod
     def parse_parameters(data):
@@ -19,38 +19,46 @@ class Server(IThread):
             r[t[0]] = t[1]
         return r
 
+    @staticmethod
+    def endswith_append(s, c):
+        if not s.endswith(c):
+            s += c
+        return s
+
     def _on_run(self):
+        tpl_dir = getcwd() + "/" + self.cfg["templates"]
+        tpl_dir = self.endswith_append(tpl_dir, "/")
+        self.env = Environment(
+            loader=FileSystemLoader(tpl_dir),
+            autoescape=select_autoescape(["html"])
+        )
+
         self.app = Sanic(self.name)
-        tpl_dir = getcwd() + "/" + self.cfg["data"]
-        if not tpl_dir.endswith("/"):
-            tpl_dir += "/"
+        static_dir = getcwd() + "/" + self.cfg["static"]
+        static_dir = self.endswith_append(static_dir, "/")
+
+        self.app.static('static', static_dir)
 
         def dashboard():
-            p = self.db.get()
+            p = self.db.current_position()
             if p is None:
                 p = self.cfg["defaultPosition"]
             else:
                 p = [p[1], p[0]]
-            tpl = Template(tpl_dir + "dashboard.html")
-            return tpl.render(counts={
-                "bluetoothClassic": self.db.count("bluetoothClassic"),
-                "bluetoothLE": self.db.count("bluetoothLE"),
-                "wifi": self.db.count("wifi"),
-                "gps": self.db.count("gps")
-            }, currentPosition=p)
+            r = {
+                "counts": self.db.counts(),
+                "currentPosition": p
+            }
+            print(r)
+            return response.html(self.env.get_template("dashboard.html").render(r))
 
         @self.app.route("/")
         async def root(req):
             return dashboard()
 
-        @self.app.route("/*")
-        async def catchall(req):
-            return dashboard()
-
         @self.app.route("/api/columns/<path:path>")
         async def api_column_names(req, path):
-            print(path)
-            return "column names"
+            return response.json(self.db.get_columns(path))
 
         @self.app.route("/api/positions/<path:path>")
         async def api_positions(path):
@@ -58,7 +66,17 @@ class Server(IThread):
 
         @self.app.route("/api/search", methods=["POST"])
         def api_search(req):
-            return "search"
+            print(req.query_string)
+            return response.json({"yuh": "skrrt"})  # todo
+
+        @self.app.websocket("/api/counts")
+        async def api_counts(req, ws):
+            lc = None
+            while True:
+                nc = self.db.counts()
+                if nc != lc:
+                    await ws.send(nc)
+                    lc = nc
 
     def run(self):
         if not self.do_run:
@@ -69,4 +87,5 @@ class Server(IThread):
                      self.cfg["port"],
                      threaded=self.cfg["threaded"],
                      use_reloader=False,
-                     debug=True)  # sanic or flacon
+                     debug=True,
+                     distributed=True)

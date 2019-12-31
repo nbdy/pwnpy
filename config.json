@@ -16,39 +16,42 @@
     "GPS": {
       "enable": false,
       "sleepTime": 1,
-      "reCounterMax": 5,
       "root": false
     },
     "WiFi": {
+      "enable": false,
       "autoInterface": false,
       "interface": "wlan0mon",
       "promiscuous": true,
-      "enable": true,
-      "reCounterMax": 5,
       "packetsPerChannel": 10,
       "timeoutPerChannel": 3,
       "channels": [1],
       "root": true
     },
     "HCX": {
+      "enable": false,
       "interface": "wlan1mon",
-      "enable": true,
       "output": "hcxdumps/",
       "root": true
     },
     "Bluetooth": {
-      "interface": "hci0",
-      "onlyLE": false,
-      "onlyClassic": false,
       "enable": true,
+      "interface": "hci0",
+
+      "scanClassic": true,
+      "scanLE": true,
+      "scanBeacon": true,
+
       "classicScanTime": 4,
       "leScanTime": 2,
-      "reCounterMax": 5,
+
+      "leReadAll": true,
       "root": true
     },
     "Server": {
       "enable": true,
-      "data": "modules/server-data/",
+      "templates": "modules/server-data/templates/",
+      "static": "modules/server-data/static/",
       "host": "0.0.0.0",
       "port": 1337,
       "threaded": true,

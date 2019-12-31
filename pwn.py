@@ -8,9 +8,9 @@ if __name__ == '__main__':
     m = None
     if len(argv) == 3 and argv[1] in ["-c", "--config", "--configuration"] and isfile(argv[2]):
         m = Manager(argv[1])
-    for l in ["config.json", "/etc/pwnpy/config.json"]:
-        if isfile(l):
-            m = Manager(l)
+    for config in ["config.json", "/etc/pwnpy/config.json"]:
+        if isfile(config):
+            m = Manager(config)
             break
     if m is not None:
         m.start()

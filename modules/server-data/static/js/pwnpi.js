@@ -78,3 +78,10 @@ function buildMap() {
     }).addTo(m);
     return m;
 }
+
+function updateCounts(){
+    let ws = new WebSocket("/api/counts");
+    ws.onmessage = function (e) {
+        console.log(e.data);
+    }
+}

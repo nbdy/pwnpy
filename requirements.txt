@@ -1,7 +1,6 @@
 gps
 bluepy
 pybluez
-pybluez[ble]
 netifaces
 psycopg2
 sanic
@@ -10,3 +9,4 @@ scapy
 loguru
 dataset
 jinja2
+git+https://github.com/smthnspcl/pybt

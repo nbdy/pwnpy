@@ -1,6 +1,4 @@
-from bluepy.btle import Scanner as btleScanner
-from bluetooth import discover_devices
-
+from pybt import ClassicDevice, LEDevice, Beacon
 from libs import IThread
 
 
@@ -30,24 +28,21 @@ class BluetoothLEDevice(BluetoothDevice):
 
 class Bluetooth(IThread):
     def scan_classic(self):
-        devs = discover_devices(duration=self.cfg["classicScanTime"], lookup_names=True)
-        for addr, name in devs:
-            self.save_for("bluetoothClassic", BluetoothDevice(addr, name))  # todo read more
+        for d in ClassicDevice.scan(self.cfg["classicScanTime"]):
+            self.save_for("bluetoothClassic", d)
 
     def scan_btle(self):
-        devs = btleScanner().scan(self.cfg["leScanTime"])
-        for dev in devs:
-            d = BluetoothLEDevice(dev.addr, "", dev.rssi, dev.connectable)  # todo read more
-            for adtype, desc, val in dev.getScanData():
-                d.advertisements.append({
-                    "type": adtype,
-                    "desc": desc,
-                    "value": val
-                })
+        for d in LEDevice.scan(self.cfg["leScanTime"], self.cfg["leReadAll"]):
             self.save_for("bluetoothLE", d)
 
+    def scan_beacon(self):
+        for d in Beacon.scan():
+            self.save_for("bluetoothBeacon", d)
+
     def _work(self):
-        if self.cfg["onlyClassic"] or not self.cfg["onlyLE"]:
+        if self.cfg["scanClassic"]:
             self.scan_classic()
-        if self.cfg["onlyLE"] or not self.cfg["onlyClassic"]:
+        if self.cfg["scanLE"]:
             self.scan_btle()
+        if self.cfg["scanBeacon"]:
+            self.scan_beacon()
