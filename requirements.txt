@@ -1,12 +1,8 @@
 gps
-bluepy
-pybluez
 netifaces
-psycopg2
-sanic
-werkzeug
 scapy
 loguru
 dataset
 jinja2
 git+https://github.com/smthnspcl/pybt
+flask
