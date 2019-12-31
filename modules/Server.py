@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from os import getcwd
 from libs import IThread
@@ -82,6 +82,18 @@ class Server(IThread):
                 await ws.send(nc)
                 lc = nc
     '''
+
+    # https://stackoverflow.com/questions/15562446/how-to-stop-flask-application-without-using-ctrl-c
+    @staticmethod
+    def shutdown_server():
+        func = request.environ.get('werkzeug.server.shutdown')
+        if func is None:
+            raise RuntimeError('no werkzeug server running')
+        func()
+
+    def _on_stop(self):
+        self.shutdown_server()
+        self.do_run = False
 
     def run(self):
         if not self.do_run:
