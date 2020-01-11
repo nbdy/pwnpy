@@ -48,7 +48,7 @@ class Setup(object):
                "sudo python setup.py install;"
                "cd /tmp/;"
                "rm -rf wifite2")
-        system("sudo pip install -r requirements.txt")
+        system("sudo pip3 install -r requirements.txt")
         return True
 
     @staticmethod
