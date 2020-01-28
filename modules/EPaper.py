@@ -5,9 +5,6 @@ from .epaper import epd2in13b
 from PIL import ImageFont
 from time import sleep
 
-COLORED = 1
-UNCOLORED = 0
-
 
 class EPaper(IThread):
     fbb = None
@@ -23,7 +20,7 @@ class EPaper(IThread):
         self.fbr = [0xFF] * (self.dp.width * self.dp.height / 8)
 
     def header(self):
-        self.dp.draw_string_at(self.fbb, 4, 30, self.cfg["header"], self.font, COLORED)
+        self.dp.draw_string_at(self.fbb, 4, 30, self.cfg["header"], self.font, self.cfg["colored"])
 
     def _work(self):
         self.header()

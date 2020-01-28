@@ -61,6 +61,7 @@
     "EPaper": {
       "enable": false,
       "root": false,
+      "colored": false,
       "font": "/usr/share/fonts/truetype/freefont/FreeMono.ttf",
       "fontSize": 12,
       "header": "pwnpy",
