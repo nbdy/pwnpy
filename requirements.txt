@@ -6,3 +6,5 @@ dataset
 jinja2
 git+https://github.com/smthnspcl/pybt
 flask
+spidev
+Pillow

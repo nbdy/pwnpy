@@ -58,8 +58,13 @@
       "defaultPosition": [49.460983, 11.061859],
       "root": false
     },
-    "UI": {
-      "enable": false
+    "EPaper": {
+      "enable": false,
+      "root": false,
+      "font": "/usr/share/fonts/truetype/freefont/FreeMono.ttf",
+      "fontSize": 12,
+      "header": "pwnpy",
+      "sleepTime": 2
     }
   }
 }
