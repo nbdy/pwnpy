@@ -11,7 +11,8 @@ wardriving tool
     - you might want to use [this](https://github.com/smthnspcl/clean-shutdown)
 - [2.9 inch ePaper display](https://www.waveshare.com/wiki/2.9inch_e-Paper_Module)
 
-
+### show and tell
+[![asciicast](https://asciinema.org/a/299821.svg)](https://asciinema.org/a/299821)
 ### how to...
 #### ...use it
 ```shell script
