@@ -1,4 +1,5 @@
 from flask import Flask, request
+from werkzeug.serving import make_server
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from os import getcwd
 from libs import IThread
@@ -9,6 +10,7 @@ from libs import IThread
 class Server(IThread):
     app = None
     env = None
+    srv = None
 
     dir_tpl = None
     dir_static = None
@@ -41,6 +43,7 @@ class Server(IThread):
         self.dir_static = self.endswith_append(self.dir_static, "/")
 
         self.app = Flask(self.name)
+        self.srv = make_server(self.cfg["host"], self.cfg["port"], self.app)
 
         @self.app.route("/")
         def root():
@@ -83,24 +86,12 @@ class Server(IThread):
                 lc = nc
     '''
 
-    # https://stackoverflow.com/questions/15562446/how-to-stop-flask-application-without-using-ctrl-c
-    @staticmethod
-    def shutdown_server():
-        func = request.environ.get('werkzeug.server.shutdown')
-        if func is None:
-            raise RuntimeError('no werkzeug server running')
-        func()
-
     def _on_stop(self):
-        self.shutdown_server()
+        self.srv.shutdown()
         self.do_run = False
 
     def run(self):
         if not self.do_run:
             return
         self._on_run()
-        self.app.run(
-            self.cfg["host"],
-            self.cfg["port"],
-            threaded=self.cfg["threaded"]
-        )
+        self.srv.serve_forever()
