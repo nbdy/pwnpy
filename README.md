@@ -1,5 +1,5 @@
 ## pwnpy
-[![Build Status](http://build.eberlein.io:8080/job/python_pwnpy/badge/icon)](http://build.eberlein.io:8080/job/python_pwnpy/)<br>
+[![Build Status](https://build.eberlein.io/buildStatus/icon?job=python_pwnpy)](https://build.eberlein.io/job/python_pwnpy/)
 
 wardriving tool
 
