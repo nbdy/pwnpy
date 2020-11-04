@@ -6,9 +6,9 @@ wardriving tool
 ### features:
 - runs on any computer
 - fully automatic
-- [modular](https://github.com/smthnspcl/pwnpy/tree/master/modules)
+- [modular](https://github.com/nbdy/pwnpy/tree/master/modules)
 - [LiPo SHIM](https://shop.pimoroni.com/products/lipo-shim) <br>
-    - you might want to use [this](https://github.com/smthnspcl/clean-shutdown)
+    - you might want to use [this](https://github.com/nbdy/clean-shutdown)
 - [2.9 inch ePaper display](https://www.waveshare.com/wiki/2.9inch_e-Paper_Module)
 
 ### show and tell
@@ -23,7 +23,7 @@ wardriving tool
 ```
 pip3 install --upgrade -r requirements.txt
 ```
-the bluetooth module depends on [pybt](https://github.com/smthnspcl/pybt)<br>
+the bluetooth module depends on [pybt](https://github.com/nbdy/pybt)<br>
 most likely there will be issues with installing gattlib<br>
 follow the instructions in the pybt repo
 
