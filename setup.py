@@ -15,7 +15,7 @@ class InstallSetupScript(sdist):
 
 
 setup(
-    long_description=open("README.rst", "r").read(),
+    long_description=open("README.md", "r").read(),
     name="pwnpy",
     version="1.00",
     description="wardriving tool",
@@ -33,5 +33,6 @@ setup(
     install_requires=open("requirements.txt").readlines(),
     cmdclass={
         'sdist': InstallSetupScript
-    }
+    },
+    long_description_content_type="text/markdown"
 )
