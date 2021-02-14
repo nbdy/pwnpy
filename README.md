@@ -1,10 +1,9 @@
 ## pwnpy
-[![Build Status](https://build.eberlein.io/buildStatus/icon?job=python_pwnpy)](https://build.eberlein.io/job/python_pwnpy/)
 
 wardriving tool
 
 ### features:
-- runs on any computer
+- runs on any computer (can't remember having tested win though)
 - fully automatic
 - [modular](https://github.com/nbdy/pwnpy/tree/master/modules)
 - [LiPo SHIM](https://shop.pimoroni.com/products/lipo-shim) <br>
@@ -14,26 +13,11 @@ wardriving tool
 ### show and tell
 [![asciicast](https://asciinema.org/a/299821.svg)](https://asciinema.org/a/299821)
 ### how to...
+#### .. install
+```shell
+pip3 install pwnpy
+```
 #### ...use it
 ```shell script
-./pwn.py -c config.json
-```
-
-#### ...install dependencies
-```
-pip3 install --upgrade -r requirements.txt
-```
-the bluetooth module depends on [pybt](https://github.com/nbdy/pybt)<br>
-most likely there will be issues with installing gattlib<br>
-follow the instructions in the pybt repo
-
-#### ...install it
-```shell script
-usage: ./install.py {arguments}
-{arguments}:
-	-ia	--install-autostart
-	-ua	--uninstall-autostart
-	-d	--dependencies
-	-db	--database
-	--help
+pwnpy -c config.json
 ```

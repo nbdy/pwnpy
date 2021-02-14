@@ -1,10 +1,7 @@
 gps
-netifaces
 scapy
 loguru
-dataset
-jinja2
-git+https://github.com/smthnspcl/pybt
-flask
+btpy
 spidev
 Pillow
+podb
