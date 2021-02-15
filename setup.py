@@ -36,5 +36,10 @@ setup(
     cmdclass={
         'sdist': InstallSetupScript
     },
+    entry_points={
+        'console_scripts': [
+            'pwnpy = pwnpy.__main__:main'
+        ]
+    },
     long_description_content_type="text/markdown",
 )
