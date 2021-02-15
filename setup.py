@@ -6,9 +6,11 @@ from os.path import isfile
 class InstallSetupScript(sdist):
     def run(self):
         try:
-            self.spawn(['sudo', 'apt-get', 'install', '-y', 'python3', 'python3-dev', 'python3-pip'])
+            self.spawn(['sudo', 'apt-get', 'install', '-y', 'python3', 'python3-dev', 'python3-pip',
+                        'gpsd', 'gpsd-clients', 'libgps-dev', 'python-gps'])
             if isfile("/sys/firmware/devicetree/base/model"):
                 self.spawn(['curl', 'https://raw.githubusercontent.com/nbdy/clean-shutdown/master/setup.sh', '|', 'bash'])
+                self.spawn(['pip3', 'install', 'spidev', 'RPi.GPIO', 'numpy', 'PIL'])
         except Exception as e:
             print(e)
         super().run()
@@ -34,5 +36,5 @@ setup(
     cmdclass={
         'sdist': InstallSetupScript
     },
-    long_description_content_type="text/markdown"
+    long_description_content_type="text/markdown",
 )

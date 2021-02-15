@@ -1,3 +1,5 @@
+from time import sleep
+
 from runnable import Runnable
 from podb import DB, DBEntry
 
@@ -11,6 +13,10 @@ class Module(Runnable):
         Runnable.__init__(self)
         self.name = name
         self.mgr = mgr
+
+    @staticmethod
+    def sleep(secs: float):
+        sleep(secs)
 
     def save(self, data: DBEntry):
         self.mgr.db.upsert(data)
