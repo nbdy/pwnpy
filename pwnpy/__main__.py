@@ -18,7 +18,7 @@ def main():
     ap.add_argument("-db", "--database", help="name of database file", default="pwnpy")
     ap.add_argument("-m", "--module", help="specify modules to use", nargs="*", default=["UI"])
     ap.add_argument("-mp", "--module-path", help="where do the modules live",
-                    default=join(abspath(join(dirname(pwnpy.__file__), "..")),"modules"))
+                    default=join(abspath(join(dirname(__file__), "..")), "modules"))
     ap.add_argument("-l", "--lipo", help="watch for lipo state", action="store_true")
     a = ap.parse_args()
 
