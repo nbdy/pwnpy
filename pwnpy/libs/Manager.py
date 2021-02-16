@@ -1,11 +1,13 @@
 from time import sleep
 from datetime import datetime
 from loguru import logger as log
-from os import listdir
+from os import listdir, path
 from runnable import Runnable
 from podb import DB
 import pyclsload
 from os.path import isfile
+
+from typing import List
 
 
 class NoConfigurationSuppliedException(Exception):
@@ -32,20 +34,22 @@ class Manager(Runnable):
         self.db = DB(cfg["db"])
         self._load_modules(cfg["module-path"], cfg["modules"])
 
-    def _load_modules(self, module_path: str, modules: list[str]):
+    def _load_modules(self, module_path: str, modules: List[str]):
         log.debug("Loading modules from: {}", module_path)
         for m in listdir(module_path):
             for w in modules:
                 if w in m:
                     log.info("Loading module: '{}'", m)
-                    self.modules.append(pyclsload.load(m, w, *[self.shared_data]))
+                    self.modules.append(pyclsload.load(path.join(module_path, m), w, *[self.shared_data]))
 
     def _start_modules(self):
         for m in self.modules:
+            log.info("Starting module '{}'", m.name)
             m.start()
 
     def _stop_modules(self):
         for m in self.modules:
+            log.info("Stopping module '{}'", m.name)
             m.stop()
 
     def on_start(self):

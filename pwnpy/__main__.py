@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 from json import load
-from os.path import isfile, abspath, dirname
+from os.path import isfile, abspath, dirname, join
 from loguru import logger as log
 
 import pwnpy
@@ -16,16 +16,16 @@ def main():
     ap.add_argument("-w", "--wifi", help="enable wifi modules", action="store_true")
     ap.add_argument("-wd", "--wifi-device", help="which wifi device should be used", default="wlan0")
     ap.add_argument("-db", "--database", help="name of database file", default="pwnpy")
-    ap.add_argument("-m", "--module", help="specify modules to use", nargs="*", default=["GPS", "WiFi", "BT"])
+    ap.add_argument("-m", "--module", help="specify modules to use", nargs="*", default=["UI"])
     ap.add_argument("-mp", "--module-path", help="where do the modules live",
-                    default=abspath(dirname(pwnpy.__file__)) + "/modules/")
+                    default=join(abspath(join(dirname(pwnpy.__file__), "..")),"modules"))
     ap.add_argument("-l", "--lipo", help="watch for lipo state", action="store_true")
     a = ap.parse_args()
 
-    cf = a.configuration
     cfg = None
 
-    if cf:
+    if "configuration" in a:
+        cf = a.configuration
         if isfile(cf):
             cfg = load(cf)
         else:
@@ -35,8 +35,8 @@ def main():
         cfg = {
             "bt": a.bluetooth, "bt-device": a.bluetooth_device,
             "w": a.wifi, "w-device": a.wifi_device,
-            "db": a.database, "modules": a.module,
-            "lipo": a.lipo
+            "modules": a.module, "module-path": a.module_path,
+            "lipo": a.lipo, "db": a.database
         }
     try:
         mgr = Manager(cfg)

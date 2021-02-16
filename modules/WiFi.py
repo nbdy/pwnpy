@@ -2,9 +2,10 @@ from scapy.layers.dot11 import *
 from scapy.layers.eap import EAPOL
 from scapy.all import conf
 from time import sleep
+from os import geteuid
 from podb import DB
 
-from pwnpy import Module
+from pwnpy import Module, ExitCode
 
 conf.verb = 0
 
@@ -98,7 +99,10 @@ class WiFi(Module):
             self.save_multiple([s, r])
 
     def on_start(self):
-        sniff(self.device, prn=self._callback, filter="proto wlan")
+        if geteuid() == 0:
+            sniff(self.device, prn=self._callback, filter="proto wlan")
+        else:
+            self.error(ExitCode.FATAL, "this needs root")
 
     def work(self):
         sleep(0.1)
