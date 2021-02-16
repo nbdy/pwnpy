@@ -6,10 +6,7 @@ from typing import List
 
 from loguru import logger as log
 
-
-class ExitCode:
-    FATAL = 0
-    NON_FATAL = 1
+from pwnpy.libs.Static import ExitCode, is_rpi, is_root
 
 
 class Module(Runnable):
@@ -46,4 +43,4 @@ class Module(Runnable):
         self.mgr.db.upsert_many(data)
 
 
-__all__ = ['Module', 'ExitCode', 'Manager']
+__all__ = ['Module', 'ExitCode', 'Manager', 'is_rpi', 'is_root']

@@ -1,11 +1,16 @@
 import time
 from os.path import join, abspath, dirname
 import spidev
-import RPi.GPIO
+from loguru import logger as log
 
 from PIL import Image, ImageDraw, ImageFont
 
-from pwnpy import Module, Manager
+from pwnpy import Module, Manager, is_rpi
+
+if not is_rpi():
+    log.error("The UI module only works with raspberry pies.")
+    exit()
+import RPi.GPIO
 
 
 class Display(object):

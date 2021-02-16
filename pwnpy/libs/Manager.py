@@ -70,6 +70,11 @@ class Manager(Runnable):
         for m in self.modules:
             self.shared_data[m.name] = m.shared_data
 
+    def check_modules(self):
+        for m in self.modules:
+            if not m.do_run and m.exit_code == ExitCode.NON_FATAL:
+                m.start()
+
     def _work(self):
         if isfile("/sys/firmware/devicetree/base/model"):
             self.check_cleanshutd_pipe()
