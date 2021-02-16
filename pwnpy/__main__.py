@@ -3,7 +3,6 @@ from json import load
 from os.path import isfile, abspath, dirname, join
 from loguru import logger as log
 
-import pwnpy
 from pwnpy import Manager, NoConfigurationSuppliedException
 
 
