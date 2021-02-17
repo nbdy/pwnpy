@@ -302,6 +302,7 @@ class Display(object):
 
 class UI(Module):
     c = None
+    shared_data = None
 
     def __init__(self, mgr: Manager):
         Module.__init__(self, "UI", mgr)

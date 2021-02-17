@@ -74,7 +74,8 @@ class Manager(Runnable):
 
     def accumulate_shared_data(self):
         for m in self.modules:
-            self.shared_data[m.name] = m.shared_data
+            if m.shared_data is not None:
+                self.shared_data[m.name] = m.shared_data
 
     def check_modules(self):
         for m in self.modules:
