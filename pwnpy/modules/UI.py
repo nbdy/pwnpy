@@ -309,6 +309,7 @@ class UI(Module):
     def __init__(self, mgr: Manager, font_file=join(abspath(dirname(__file__)), 'Font.ttc'), **kwargs):
         Module.__init__(self, "UI", mgr)
         self.font_size = kwargs.get("font_size") or 12
+        self.refresh_rate = kwargs.get("refresh_rate") or 5
         self.font_file = font_file
 
     def on_start(self):
@@ -340,4 +341,4 @@ class UI(Module):
             log.debug(line)
             db.text((x, y), line, 0, self.font)
         self.c.display(self.c.get_buffer(bi))
-        self.sleep(5)
+        self.sleep(self.refresh_rate)

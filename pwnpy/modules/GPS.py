@@ -15,5 +15,12 @@ class GPS(Module):
         self._g = gps(mode=WATCH_ENABLE)
 
     def work(self):
-        self.shared_data = self._g.next()
+        self._g.next()
+        self.shared_data = {
+            "lat": self._g.fix.latitude,
+            "lng": self._g.fix.longitude,
+            "alt": self._g.fix.altitude,
+            "spd": self._g.fix.speed,
+            "sat": self._g.satellites_used
+        }
         sleep(0.5)
