@@ -315,7 +315,7 @@ class UI(Module):
             self.font = ImageFont.truetype(self.font_file, 8)
             log.debug("Loaded font file '{}'.".format(self.font_file))
             self.c = Display()
-            self.c.init(1)
+            self.c.init(0)
             self.c.clear(0xFF)
             time.sleep(1)
         else:
