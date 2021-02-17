@@ -7,7 +7,7 @@ class InstallSetupScript(sdist):
     def run(self):
         try:
             self.spawn(['sudo', 'apt-get', 'install', '-y', 'python3', 'python3-dev', 'python3-pip',
-                        'gpsd', 'gpsd-clients', 'libgps-dev', 'python-gps'])
+                        'gpsd', 'gpsd-clients', 'libgps-dev', 'python-gps', 'libopenjp2-tools'])
             if isfile("/sys/firmware/devicetree/base/model"):
                 self.spawn(['curl', 'https://raw.githubusercontent.com/nbdy/clean-shutdown/master/setup.sh', '|', 'bash'])
                 self.spawn(['pip3', 'install', 'spidev', 'RPi.GPIO', 'numpy', 'PIL'])
