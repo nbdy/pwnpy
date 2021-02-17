@@ -310,7 +310,7 @@ class UI(Module):
     def on_start(self):
         self.c = Display()
         self.c.init(0)
-        self.c.clear()
+        self.c.clear(0xFF)
         time.sleep(1)
 
     def work(self):
