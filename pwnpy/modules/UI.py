@@ -306,13 +306,14 @@ class UI(Module):
 
     font = None
 
-    def __init__(self, mgr: Manager, font_file=join(abspath(dirname(__file__)), 'Font.ttc')):
+    def __init__(self, mgr: Manager, font_file=join(abspath(dirname(__file__)), 'Font.ttc'), **kwargs):
         Module.__init__(self, "UI", mgr)
+        self.font_size = kwargs.get("font_size") or 12
         self.font_file = font_file
 
     def on_start(self):
         if isfile(self.font_file):
-            self.font = ImageFont.truetype(self.font_file, 8)
+            self.font = ImageFont.truetype(self.font_file, self.font_size)
             log.debug("Loaded font file '{}'.".format(self.font_file))
             self.c = Display()
             self.c.init(0)
