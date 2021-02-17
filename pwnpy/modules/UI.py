@@ -312,7 +312,7 @@ class UI(Module):
 
     def on_start(self):
         if isfile(self.font_file):
-            self.font = ImageFont.truetype(self.font_file, 12)
+            self.font = ImageFont.truetype(self.font_file, 8)
             log.debug("Loaded font file '{}'.".format(self.font_file))
             self.c = Display()
             self.c.init(1)
