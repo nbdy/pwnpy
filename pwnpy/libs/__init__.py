@@ -29,6 +29,8 @@ class Module(Runnable):
         lf("Stopping '{}' because of '{}'.".format(self.name, reason))
         self.exit_code = code
         self.exit_reason = reason
+        self.shared_data["exit_code"] = code
+        self.shared_data["exit_reason"] = reason
         self.stop()
 
     @staticmethod

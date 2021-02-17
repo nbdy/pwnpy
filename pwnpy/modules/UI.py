@@ -334,10 +334,13 @@ class UI(Module):
         y = 2
         db.text((x, y), 'pwnpy', font=self.font, fill=0)
         for key in data.keys():
-            y += 20
+            y += 12
             line = "{}: ".format(key)
-            for sk in data[key].keys():
-                line += "{}: {} | ".format(sk, data[key][sk])
+            if "exit_reason" in data[key].keys():
+                line += "error: {}".format(data[key]["exit_reason"])
+            else:
+                for sk in data[key].keys():
+                    line += "{}: {} | ".format(sk, data[key][sk])
             log.debug(line)
             db.text((x, y), line, 0, self.font)
         self.c.display(self.c.get_buffer(bi))
