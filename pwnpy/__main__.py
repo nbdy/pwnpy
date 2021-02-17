@@ -15,7 +15,7 @@ def main():
     ap.add_argument("-w", "--wifi", help="enable wifi modules", action="store_true")
     ap.add_argument("-wd", "--wifi-device", help="which wifi device should be used", default="wlan0")
     ap.add_argument("-db", "--database", help="name of database file", default="pwnpy")
-    ap.add_argument("-m", "--module", help="specify modules to use", nargs="*", default=["UI"])
+    ap.add_argument("-m", "--module", help="specify modules to use", nargs="*", default=["UI", "GPS"])
     ap.add_argument("-mp", "--module-path", help="where do the modules live",
                     default=join(abspath(join(dirname(__file__), "..")), "modules"))
     ap.add_argument("-l", "--lipo", help="watch for lipo state", action="store_true")

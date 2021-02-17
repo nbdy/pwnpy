@@ -318,7 +318,14 @@ class UI(Module):
 
         bi = Image.new('1', (self.c.height, self.c.width), 255)
         db = ImageDraw.Draw(bi)
-        db.text((1, 1), 'pwnpy', font=self.font, fill=0)
-        db.text((21, 1), "{ GPS }: " + "Lng: {0} | Lat: {1}".format(data["GPS"]["longitude"], data["GPS"]["latitude"]))
+        x = 2
+        y = 2
+        db.text((x, y), 'pwnpy', font=self.font, fill=0)
+        for key in data.keys():
+            x += 20
+            line = "{ {} }: ".format(key)
+            for sk in data[key].keys():
+                line += "{}: {} | ".format(sk, data[key][sk])
+            db.text((x, y), line)
 
         self.sleep(1)
