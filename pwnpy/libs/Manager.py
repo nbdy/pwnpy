@@ -36,6 +36,11 @@ class Manager(Runnable):
 
     def _load_modules(self, module_path: str, modules: List[str]):
         log.debug("Loading modules from: {}", module_path)
+        mods = listdir(module_path)
+        if len(mods) == 0:
+            log.error("No modules to load, nothing to do.")
+            self.stop()
+            return
         for m in listdir(module_path):
             for w in modules:
                 if w in m:
