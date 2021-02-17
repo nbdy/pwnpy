@@ -335,5 +335,6 @@ class UI(Module):
                 line += "{}: {} | ".format(sk, data[key][sk])
             log.debug(line)
             db.text((x, y), line, 0, self.font)
+        self.c.display(self.c.get_buffer(bi))
 
         self.sleep(3)
