@@ -80,8 +80,7 @@ class Manager(Runnable):
             if not m.do_run and m.exit_code == ExitCode.NON_FATAL:
                 m.start()
 
-    def _work(self):
-        print("stuff")
+    def work(self):
         if isfile("/sys/firmware/devicetree/base/model"):
             self.check_cleanshutd_pipe()
         self.accumulate_shared_data()
