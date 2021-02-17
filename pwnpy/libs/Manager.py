@@ -40,7 +40,7 @@ class Manager(Runnable):
             for w in modules:
                 if w in m:
                     log.info("Loading module: '{}'", m)
-                    self.modules.append(pyclsload.load(path.join(module_path, m), w, *[self.shared_data]))
+                    self.modules.append(pyclsload.load(path.join(module_path, m), w, *[self]))
 
     def _start_modules(self):
         for m in self.modules:
