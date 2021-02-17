@@ -326,6 +326,7 @@ class UI(Module):
             line = "{ {} }: ".format(key)
             for sk in data[key].keys():
                 line += "{}: {} | ".format(sk, data[key][sk])
+            log.debug(line)
             db.text((x, y), line)
 
-        self.sleep(1)
+        self.sleep(3)
