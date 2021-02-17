@@ -42,7 +42,7 @@ setup(
         ]
     },
     package_data={
-        "pwnpy": ["templates/*.html"]
+        "pwnpy": ["modules/*"]
     },
     long_description_content_type="text/markdown",
 )
