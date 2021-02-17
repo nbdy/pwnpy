@@ -37,7 +37,7 @@ class Manager(Runnable):
     def _load_modules(self, module_path: str, modules: List[str]):
         log.debug("Loading modules from: {}", module_path)
         mods = listdir(module_path)
-        if len(mods) == 0:
+        if len(mods) == 0 or not path.isdir(module_path):
             log.error("No modules to load, nothing to do.")
             self.stop()
             return
@@ -81,6 +81,7 @@ class Manager(Runnable):
                 m.start()
 
     def _work(self):
+        print("stuff")
         if isfile("/sys/firmware/devicetree/base/model"):
             self.check_cleanshutd_pipe()
         self.accumulate_shared_data()
