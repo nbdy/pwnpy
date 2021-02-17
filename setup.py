@@ -41,5 +41,8 @@ setup(
             'pwnpy = pwnpy.__main__:main'
         ]
     },
+    package_data={
+        "pwnpy": ["templates/*.html"]
+    },
     long_description_content_type="text/markdown",
 )

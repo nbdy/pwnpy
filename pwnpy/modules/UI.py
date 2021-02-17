@@ -315,7 +315,6 @@ class UI(Module):
 
     def work(self):
         data = self.mgr.shared_data
-
         bi = Image.new('1', (self.c.height, self.c.width), 255)
         db = ImageDraw.Draw(bi)
         x = 2
@@ -326,6 +325,7 @@ class UI(Module):
             line = "{ {} }: ".format(key)
             for sk in data[key].keys():
                 line += "{}: {} | ".format(sk, data[key][sk])
+            log.debug(line)
             db.text((x, y), line)
 
-        self.sleep(1)
+        self.sleep(3)
