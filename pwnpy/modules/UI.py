@@ -1,11 +1,11 @@
 import time
-from os.path import join, abspath, dirname
+from os.path import join, abspath, dirname, isfile
 import spidev
 from loguru import logger as log
 
 from PIL import Image, ImageDraw, ImageFont
 
-from pwnpy import Module, Manager, is_rpi
+from pwnpy import Module, Manager, is_rpi, ExitCode
 
 if not is_rpi():
     log.error("The UI module only works with raspberry pies.")
@@ -304,15 +304,21 @@ class UI(Module):
     c = None
     shared_data = None
 
-    def __init__(self, mgr: Manager):
+    font = None
+
+    def __init__(self, mgr: Manager, font_file=join(abspath(dirname(__file__)), 'Font.ttc')):
         Module.__init__(self, "UI", mgr)
-        self.font = ImageFont.truetype(join(abspath(dirname(__file__)), 'Font.ttc'), 18)
+        self.font_file = font_file
 
     def on_start(self):
-        self.c = Display()
-        self.c.init(0)
-        self.c.clear(0xFF)
-        time.sleep(1)
+        if isfile(self.font_file):
+            self.font = ImageFont.truetype(self.font_file, 18)
+            self.c = Display()
+            self.c.init(0)
+            self.c.clear(0xFF)
+            time.sleep(1)
+        else:
+            self.error(ExitCode.FATAL, "I could not load the font file '{}'".format(self.font_file))
 
     def work(self):
         data = self.mgr.shared_data
