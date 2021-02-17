@@ -322,7 +322,7 @@ class UI(Module):
         db.text((x, y), 'pwnpy', font=self.font, fill=0)
         for key in data.keys():
             x += 20
-            line = "{ {} }: ".format(key)
+            line = "{}: ".format(key)
             for sk in data[key].keys():
                 line += "{}: {} | ".format(sk, data[key][sk])
             log.debug(line)
