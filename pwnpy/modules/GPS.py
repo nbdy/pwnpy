@@ -21,6 +21,7 @@ class GPS(Module):
             "lng": self._g.fix.longitude,
             "alt": self._g.fix.altitude,
             "spd": self._g.fix.speed,
-            "sat": self._g.satellites_used
+            "sat": self._g.satellites_used,
+            "tme": self._g.fix.time
         }
         sleep(0.5)
