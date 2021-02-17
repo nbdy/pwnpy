@@ -315,11 +315,14 @@ class UI(Module):
             self.font = ImageFont.truetype(self.font_file, 18)
             log.debug("Loaded font file '{}'.".format(self.font_file))
             self.c = Display()
-            self.c.init(0)
+            self.c.init(1)
             self.c.clear(0xFF)
             time.sleep(1)
         else:
             self.error(ExitCode.FATAL, "I could not load the font file '{}'".format(self.font_file))
+
+    def on_stop(self):
+        self.c.clear(0xFF)
 
     def work(self):
         data = self.mgr.shared_data
@@ -335,6 +338,6 @@ class UI(Module):
                 line += "{}: {} | ".format(sk, data[key][sk])
             log.debug(line)
             db.text((x, y), line, 0, self.font)
-        self.c.display(self.c.get_buffer(bi))
+        self.c.display_partial(self.c.get_buffer(bi))
 
         self.sleep(3)
