@@ -308,7 +308,7 @@ class UI(Module):
 
     def __init__(self, mgr: Manager, font_file=join(abspath(dirname(__file__)), 'Font.ttc'), **kwargs):
         Module.__init__(self, "UI", mgr)
-        self.font_size = kwargs.get("font_size") or 12
+        self.font_size = kwargs.get("font_size") or 10
         self.refresh_rate = kwargs.get("refresh_rate") or 5
         self.font_file = font_file
 
