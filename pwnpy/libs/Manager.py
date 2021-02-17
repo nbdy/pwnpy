@@ -64,12 +64,13 @@ class Manager(Runnable):
         self._stop_modules()
 
     def check_cleanshutd_pipe(self):
-        if open("/tmp/cleanshutd").read() == '1':  # todo configurable
-            self.db.insert(self.name, {
-                "start": self.timestamp_start,
-                "end": datetime.now()
-            })
-            self.stop()
+        if isfile("/tmp/cleanshutd"):
+            if open("/tmp/cleanshutd").read() == '1':  # todo configurable
+                self.db.insert(self.name, {
+                    "start": self.timestamp_start,
+                    "end": datetime.now()
+                })
+                self.stop()
 
     def accumulate_shared_data(self):
         for m in self.modules:
