@@ -349,6 +349,7 @@ class UI(Module):
                         ll = _ll
                     self.draw_line(db, (x, y), line)
                     y += 12
+            print(ll)
             x += ll
 
         self.c.display(self.c.get_buffer(bi))
