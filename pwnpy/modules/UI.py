@@ -344,7 +344,7 @@ class UI(Module):
             else:
                 for sk in sks:
                     line = "{}: {}".format(sk, data[key][sk])
-                    _ll = len(line)
+                    _ll = db.textlength(line, self.font)
                     if _ll > ll:
                         ll = _ll
                     self.draw_line(db, (x, y), line)
