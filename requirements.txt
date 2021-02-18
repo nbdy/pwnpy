@@ -5,3 +5,5 @@ btpy
 spidev
 Pillow
 podb
+pyrunnable
+pyclsload
