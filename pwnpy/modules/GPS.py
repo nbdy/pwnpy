@@ -1,5 +1,4 @@
-from pwnpy import Module
-from podb import DB
+from pwnpy import Module, Manager
 from time import sleep
 
 from gps import gps, WATCH_ENABLE
@@ -8,8 +7,8 @@ from gps import gps, WATCH_ENABLE
 class GPS(Module):
     _g: gps = None
 
-    def __init__(self, db: DB):
-        Module.__init__(self, "GPS", db)
+    def __init__(self, mgr: Manager):
+        Module.__init__(self, "GPS", mgr)
 
     def on_start(self):
         self._g = gps(mode=WATCH_ENABLE)

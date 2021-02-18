@@ -3,9 +3,8 @@ from scapy.layers.eap import EAPOL
 from scapy.all import conf
 from time import sleep
 from os import geteuid
-from podb import DB
 
-from pwnpy import Module, ExitCode
+from pwnpy import Module, ExitCode, Manager
 
 conf.verb = 0
 
@@ -89,8 +88,8 @@ BROADCAST = "ff:ff:ff:ff:ff:ff"
 
 
 class WiFi(Module):
-    def __init__(self, db: DB, **kwargs):
-        Module.__init__(self, "WiFi", db)
+    def __init__(self, mgr: Manager, **kwargs):
+        Module.__init__(self, "WiFi", mgr)
         self.device = kwargs.get("device") or "wlan0"
 
     def _callback(self, pkt):

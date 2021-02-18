@@ -23,5 +23,5 @@ class BT(Module):
                     device.__dict__.update(self.mgr.shared_data["GPS"])
                 entry = DBEntry(**device.__dict__)
                 log.debug("Found: {} | {}", device.name, device.address)
-                self.mgr.db.upsert(entry)
+                self.save(entry)
         sleep(0.2)
