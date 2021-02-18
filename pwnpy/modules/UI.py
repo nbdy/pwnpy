@@ -342,7 +342,7 @@ class UI(Module):
                 self.draw_line(db, (x, y), "err: {}".format(data[key]["exit_reason"]))
             else:
                 for sk in sks:
-                    self.draw_line(db, (x, y), "{}: {}".format(sk, data[key]["exit_reason"]))
+                    self.draw_line(db, (x, y), "{}: {}".format(sk, data[key][sk]))
             y += 12
         self.c.display(self.c.get_buffer(bi))
         self.sleep(self.refresh_rate)
