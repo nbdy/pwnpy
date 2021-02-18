@@ -336,13 +336,20 @@ class UI(Module):
         x = 2
         y = 2
         for key in data.keys():
+            ll = 0
             self.draw_line(db, (x, y), "{}: ".format(key))
             sks = data[key].keys()
             if "exit_reason" in sks:
                 self.draw_line(db, (x, y), "err: {}".format(data[key]["exit_reason"]))
             else:
                 for sk in sks:
-                    self.draw_line(db, (x, y), "{}: {}".format(sk, data[key][sk]))
-            y += 12
+                    line = "{}: {}".format(sk, data[key][sk])
+                    _ll = len(line)
+                    if _ll > ll:
+                        ll = _ll
+                    self.draw_line(db, (x, y), line)
+                    y += 12
+            x += ll
+
         self.c.display(self.c.get_buffer(bi))
         self.sleep(self.refresh_rate)
