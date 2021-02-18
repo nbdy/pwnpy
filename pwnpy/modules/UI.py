@@ -338,6 +338,7 @@ class UI(Module):
         for key in data.keys():
             ll = 0
             self.draw_line(db, (x, y), "{}: ".format(key))
+            y += 12
             sks = data[key].keys()
             if "exit_reason" in sks:
                 self.draw_line(db, (x, y), "err: {}".format(data[key]["exit_reason"]))
