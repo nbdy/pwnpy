@@ -8,7 +8,7 @@ wardriving tool
 - [modular](https://github.com/nbdy/pwnpy/tree/master/modules)
 - [LiPo SHIM](https://shop.pimoroni.com/products/lipo-shim) <br>
     - you might want to use [this](https://github.com/nbdy/clean-shutdown)
-- [2.9 inch ePaper display](https://www.waveshare.com/wiki/2.9inch_e-Paper_Module)
+- [2.13 inch ePaper display](https://www.waveshare.com/wiki/2.13inch_e-Paper_HAT_(B))
 
 ### show and tell
 [![asciicast](https://asciinema.org/a/299821.svg)](https://asciinema.org/a/299821)
@@ -20,4 +20,10 @@ pip3 install pwnpy
 #### ...use it
 ```shell script
 pwnpy -c config.json
+```
+
+#### .. use the WiFi module without root
+```shell
+# set capabilities for our python executable
+setcap cap_net_raw=eip /usr/bin/python3
 ```
