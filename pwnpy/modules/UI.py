@@ -335,7 +335,10 @@ class UI(Module):
         db = ImageDraw.Draw(bi)
         x = 2
         y = 2
+        kl = len(data.keys())
+        i = 0
         for key in data.keys():
+            i += 1
             ll = 0
             self.draw_line(db, (x, y), "{}: ".format(key))
             y += 12
@@ -350,8 +353,12 @@ class UI(Module):
                         ll = _ll
                     self.draw_line(db, (x, y), line)
                     y += 12
+
             print(ll)
             x += ll
+            if i < kl:
+                for _ in range(0, 100, 12):
+                    self.draw_line(db, (x, _), "|")
 
         self.c.display(self.c.get_buffer(bi))
         self.sleep(self.refresh_rate)
