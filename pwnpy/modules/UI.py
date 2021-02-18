@@ -326,22 +326,23 @@ class UI(Module):
     def on_stop(self):
         self.c.clear(0xFF)
 
+    def draw_line(self, ib, coordinates, text: str):
+        ib.text(coordinates, text, 0, self.font)
+
     def work(self):
         data = self.mgr.shared_data
         bi = Image.new('1', (self.c.height, self.c.width), 255)
         db = ImageDraw.Draw(bi)
         x = 2
         y = 2
-        db.text((x, y), 'pwnpy', font=self.font, fill=0)
         for key in data.keys():
-            y += 12
-            line = "{}: ".format(key)
-            if "exit_reason" in data[key].keys():
-                line += "error: {}".format(data[key]["exit_reason"])
+            self.draw_line(db, (x, y), "{}: ".format(key))
+            sks = data[key].keys()
+            if "exit_reason" in sks:
+                self.draw_line(db, (x, y), "err: {}".format(data[key]["exit_reason"]))
             else:
-                for sk in data[key].keys():
-                    line += "{}: {} | ".format(sk, data[key][sk])
-            log.debug(line)
-            db.text((x, y), line, 0, self.font)
+                for sk in sks:
+                    self.draw_line(db, (x, y), "{}: {}".format(sk, data[key]["exit_reason"]))
+            y += 12
         self.c.display(self.c.get_buffer(bi))
         self.sleep(self.refresh_rate)

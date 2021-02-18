@@ -35,7 +35,7 @@ class Manager(Runnable):
         self._load_modules(cfg["module-path"], cfg["modules"])
 
     def _load_modules(self, module_path: str, modules: List[str]):
-        log.debug("Loading modules from: {}", module_path)
+        log.debug("Searching for modules '{}' in directory {}", ', '.join(modules), module_path)
         mods = listdir(module_path)
         if len(mods) == 0 or not path.isdir(module_path):
             log.error("No modules to load, nothing to do.")
