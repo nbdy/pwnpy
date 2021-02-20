@@ -43,7 +43,7 @@ class Manager(Runnable):
             return
         for m in listdir(module_path):
             for w in modules:
-                if w in m:
+                if w.lower() == m.lower():
                     log.info("Loading module: '{}'", m)
                     self.modules.append(pyclsload.load(path.join(module_path, m), w, *[self]))
 
