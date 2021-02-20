@@ -31,6 +31,7 @@ def main():
             log.error("Configuration file '{}' does not exist.", cf)
             exit(1)
     else:
+        a.module_path = abspath(a.module_path)
         cfg = {
             "bt": a.bluetooth, "bt-device": a.bluetooth_device,
             "w": a.wifi, "w-device": a.wifi_device,
