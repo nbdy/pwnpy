@@ -36,14 +36,16 @@ class Manager(Runnable):
 
     def _load_modules(self, module_path: str, modules: List[str]):
         log.debug("Searching for modules '{}' in directory {}", ', '.join(modules), module_path)
+        if not path.isdir(module_path):
+            log.error("Module directory '{}' does not exist.", module_path)
+            return self.stop()
         mods = listdir(module_path)
         if len(mods) == 0 or not path.isdir(module_path):
             log.error("No modules to load, nothing to do.")
-            self.stop()
-            return
+            return self.stop()
         for m in listdir(module_path):
             for w in modules:
-                if w.lower() == m.lower():
+                if w.lower() == m.lower()[0:-3]:
                     log.info("Loading module: '{}'", m)
                     self.modules.append(pyclsload.load(path.join(module_path, m), w, *[self]))
 
