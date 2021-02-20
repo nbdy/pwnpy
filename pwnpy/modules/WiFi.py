@@ -101,7 +101,7 @@ class WiFi(Module):
         if geteuid() == 0:
             sniff(self.device, prn=self._callback, filter="proto wlan")
         else:
-            self.error(ExitCode.FATAL, "this needs root")
+            self.error(ExitCode.FATAL, "no root")
 
     def work(self):
         sleep(0.1)
