@@ -357,7 +357,8 @@ class UI(Module):
             if i < kl:
                 for _ in range(0, 100, 12):
                     self.draw_line(db, (x, _), "|")
-            x += 4
+            x += 8
+            y = 2
 
         self.c.display(self.c.get_buffer(bi))
         self.sleep(self.refresh_rate)
