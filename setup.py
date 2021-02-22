@@ -27,8 +27,7 @@ setup(
     classifiers=[
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
-        'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 3.9',
+        'License :: OSI Approved :: MIT License'
     ],
     keywords="wardriving tool raspberry pi",
     packages=find_packages(),
@@ -36,7 +35,7 @@ setup(
         "gps", "scapy", "loguru", "btpy", "spidev", "Pillow", "podb", "pyrunnable", "pyclsload"
     ],
     cmdclass={
-        'sdist': InstallSetupScript
+        'install': InstallSetupScript
     },
     entry_points={
         'console_scripts': [
