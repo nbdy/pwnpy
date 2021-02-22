@@ -6,11 +6,11 @@ from os.path import isfile
 class InstallSetupScript(sdist):
     def run(self):
         try:
-            self.spawn(['sudo', 'apt-get', 'install', '-y', 'python3', 'python3-dev', 'python3-pip',
+            self.spawn(['sudo', 'apt-get', 'install', '-y', 'python3', 'python3-dev', 'python3-pip', 'gpsd',
                         'gpsd', 'gpsd-clients', 'libgps-dev', 'python-gps', 'libopenjp2-tools', 'aircrack-ng'])
             if isfile("/sys/firmware/devicetree/base/model"):
-                self.spawn(['curl', 'https://raw.githubusercontent.com/nbdy/clean-shutdown/master/setup.sh', '|', 'bash'])
-                self.spawn(['pip3', 'install', 'spidev', 'RPi.GPIO', 'numpy', 'PIL'])
+                self.spawn(['curl', 'https://raw.githubusercontent.com/nbdy/clean-shutdown/master/setup.sh', '|',
+                            'bash'])
         except Exception as e:
             print(e)
         super().run()
@@ -32,7 +32,9 @@ setup(
     ],
     keywords="wardriving tool raspberry pi",
     packages=find_packages(),
-    install_requires=open("requirements.txt").readlines(),
+    install_requires=[
+        "gps", "scapy", "loguru", "btpy", "spidev", "Pillow", "podb", "pyrunnable", "pyclsload"
+    ],
     cmdclass={
         'sdist': InstallSetupScript
     },
