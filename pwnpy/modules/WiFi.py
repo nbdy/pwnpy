@@ -2,7 +2,7 @@ from scapy.layers.dot11 import *
 from scapy.layers.eap import EAPOL
 from scapy.all import conf
 from time import sleep
-from os import geteuid
+from os import geteuid, system
 
 from pwnpy import Module, ExitCode, Manager
 
@@ -99,9 +99,8 @@ class WiFi(Module):
 
     def on_start(self):
         if geteuid() == 0:
-            sniff(self.device, prn=self._callback, filter="proto wlan")
-        else:
-            self.error(ExitCode.FATAL, "no root")
+            system("sudo airmon-ng start wlan0")
+        sniff(self.device, prn=self._callback, filter="proto wlan")
 
     def work(self):
         sleep(0.1)
