@@ -19,7 +19,7 @@ class InstallSetupScript(sdist):
 setup(
     long_description=open("README.md", "r").read(),
     name="pwnpy",
-    version="1.00",
+    version="1.0",
     description="wardriving tool",
     author="Pascal Eberlein",
     author_email="pascal@eberlein.io",
