@@ -1,7 +1,7 @@
 from pwnpy import Module, Manager
 from time import sleep
 
-from gps import gps, WATCH_ENABLE
+from gps import gps, WATCH_ENABLE, GPSD_PORT
 
 
 class GPS(Module):
@@ -11,7 +11,7 @@ class GPS(Module):
         Module.__init__(self, "GPS", mgr)
 
     def on_start(self):
-        self._g = gps(mode=WATCH_ENABLE)
+        self._g = gps("127.0.0.1", GPSD_PORT, mode=WATCH_ENABLE)
 
     def work(self):
         self._g.next()
