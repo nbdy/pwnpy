@@ -44,4 +44,4 @@ class Module(Runnable):
         self.mgr.db.upsert_many(data)
 
 
-__all__ = ['Module', 'ExitCode', 'Manager', 'is_rpi', 'is_root']
+__all__ = ['Module', 'ExitCode', 'Manager', 'is_rpi', 'is_root', 'log']
