@@ -1,13 +1,4 @@
 from setuptools import setup, find_packages
-from os.path import isfile
-from os import system
-
-
-system("sudo apt-get install -y python3 python3-dev python3-pip gpsd gpsd-clients libgps-dev python-gps "
-       "libopenjp2-tools aircrack-ng")
-
-if isfile("/sys/firmware/devicetree/base/model"):
-    system("curl https://raw.githubusercontent.com/nbdy/clean-shutdown/master/setup.sh | bash")
 
 
 setup(
