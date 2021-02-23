@@ -1,19 +1,13 @@
-from setuptools.command.sdist import sdist
 from setuptools import setup, find_packages
 from os.path import isfile
+from os import system
 
 
-class InstallSetupScript(sdist):
-    def run(self):
-        try:
-            self.spawn(['sudo', 'apt-get', 'install', '-y', 'python3', 'python3-dev', 'python3-pip', 'gpsd',
-                        'gpsd', 'gpsd-clients', 'libgps-dev', 'python-gps', 'libopenjp2-tools', 'aircrack-ng'])
-            if isfile("/sys/firmware/devicetree/base/model"):
-                self.spawn(['curl', 'https://raw.githubusercontent.com/nbdy/clean-shutdown/master/setup.sh', '|',
-                            'bash'])
-        except Exception as e:
-            print(e)
-        super().run()
+system("sudo apt-get install -y python3 python3-dev python3-pip gpsd gpsd-clients libgps-dev python-gps "
+       "libopenjp2-tools aircrack-ng")
+
+if isfile("/sys/firmware/devicetree/base/model"):
+    system("curl https://raw.githubusercontent.com/nbdy/clean-shutdown/master/setup.sh | bash")
 
 
 setup(
@@ -34,9 +28,6 @@ setup(
     install_requires=[
         "gps", "scapy", "loguru", "btpy", "spidev", "Pillow", "podb", "pyrunnable", "pyclsload"
     ],
-    cmdclass={
-        'install': InstallSetupScript
-    },
     entry_points={
         'console_scripts': [
             'pwnpy = pwnpy.__main__:main'
