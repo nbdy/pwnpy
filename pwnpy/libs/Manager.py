@@ -8,6 +8,7 @@ import pyclsload
 from os.path import isfile
 
 from typing import List
+from pwnpy import ModuleType, ExitCode
 
 
 class NoConfigurationSuppliedException(Exception):
@@ -32,9 +33,9 @@ class Manager(Runnable):
         log.debug(cfg)
         self.timestamp_start = datetime.now()
         self.db = DB(cfg["db"])
-        self._load_modules(cfg["module-path"], cfg["modules"])
+        self._load_modules(cfg["module-path"], cfg["modules"], cfg["w"], cfg["bt"])
 
-    def _load_modules(self, module_path: str, modules: List[str]):
+    def _load_modules(self, module_path: str, modules: List[str], wifi: bool, bt: bool):
         log.debug("Searching for modules '{}' in directory {}", ', '.join(modules), module_path)
         if not path.isdir(module_path):
             log.error("Module directory '{}' does not exist.", module_path)
@@ -47,7 +48,13 @@ class Manager(Runnable):
             for w in modules:
                 if w.lower() == m.lower()[0:-3]:
                     log.info("Loading module: '{}'", m)
-                    self.modules.append(pyclsload.load(path.join(module_path, m), w, *[self]))
+                    mod = pyclsload.load(path.join(module_path, m), w, *[self])
+                    if mod.type == ModuleType.WIFI and not wifi:
+                        continue
+                    elif mod.type == ModuleType.BT and not bt:
+                        continue
+                    else:
+                        self.modules.append(mod)
 
     def _start_modules(self):
         for m in self.modules:

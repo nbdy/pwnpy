@@ -8,10 +8,19 @@ from loguru import logger as log
 from pwnpy.libs.Static import ExitCode, is_rpi, is_root
 
 
+class ModuleType:
+    NONE = 0
+    WIFI = 1
+    BT = 2
+    GPS = 3
+    UI = 4
+
+
 class Module(Runnable):
     name = "DefaultModule"
     db: DB = None
     shared_data = {}
+    type = ModuleType.NONE
 
     exit_reason = ""
     exit_code = ExitCode.NON_FATAL
@@ -44,4 +53,4 @@ class Module(Runnable):
         self.mgr.db.upsert_many(data)
 
 
-__all__ = ['Module', 'ExitCode', 'Manager', 'is_rpi', 'is_root', 'log']
+__all__ = ['Module', 'ExitCode', 'Manager', 'is_rpi', 'is_root', 'log', 'ModuleType']

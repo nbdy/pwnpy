@@ -1,4 +1,4 @@
-from pwnpy import Module, is_root, Manager
+from pwnpy import Module, is_root, Manager, ModuleType
 from btpy import LEDevice, ClassicDevice
 from podb import DBEntry
 from loguru import logger as log
@@ -6,6 +6,8 @@ from time import sleep
 
 
 class BT(Module):
+    type = ModuleType.BT
+
     def __init__(self, mgr: Manager, **kwargs):
         Module.__init__(self, "BT", mgr)
         self.device = kwargs.get("device") or "hci0"

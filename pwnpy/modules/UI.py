@@ -5,7 +5,7 @@ from loguru import logger as log
 
 from PIL import Image, ImageDraw, ImageFont
 
-from pwnpy import Module, Manager, is_rpi, ExitCode
+from pwnpy import Module, Manager, is_rpi, ExitCode, ModuleType
 
 if not is_rpi():
     log.error("The UI module only works with raspberry pies.")
@@ -303,6 +303,7 @@ class Display(object):
 class UI(Module):
     c = None
     shared_data = None
+    type = ModuleType.UI
 
     font = None
 

@@ -1,4 +1,4 @@
-from pwnpy import Module, Manager, log
+from pwnpy import Module, Manager, log, ModuleType
 from time import sleep
 
 from gps import gps, WATCH_ENABLE, GPSD_PORT
@@ -6,6 +6,7 @@ from gps import gps, WATCH_ENABLE, GPSD_PORT
 
 class GPS(Module):
     _g: gps = None
+    type = ModuleType.GPS
 
     def __init__(self, mgr: Manager):
         Module.__init__(self, "GPS", mgr)

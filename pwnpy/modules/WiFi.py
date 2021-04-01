@@ -4,7 +4,7 @@ from scapy.all import conf
 from time import sleep
 from os import geteuid, system
 
-from pwnpy import Module, ExitCode, Manager
+from pwnpy import Module, Manager, ModuleType
 
 conf.verb = 0
 
@@ -88,6 +88,8 @@ BROADCAST = "ff:ff:ff:ff:ff:ff"
 
 
 class WiFi(Module):
+    type = ModuleType.WIFI
+
     def __init__(self, mgr: Manager, **kwargs):
         Module.__init__(self, "WiFi", mgr)
         self.device = kwargs.get("device") or "wlan0"
