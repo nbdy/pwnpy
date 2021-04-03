@@ -1,5 +1,4 @@
 gps
-scapy
 loguru
 btpy
 spidev
@@ -7,3 +6,4 @@ Pillow
 podb
 pyrunnable
 pyclsload
+scapy

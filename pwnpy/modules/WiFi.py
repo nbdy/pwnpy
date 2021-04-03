@@ -101,7 +101,8 @@ class WiFi(Module):
 
     def on_start(self):
         if geteuid() == 0:
-            system("sudo airmon-ng start wlan0")
+            system("sudo airmon-ng start {0}".format(self.device))
+            self.device = "{0}mon".format(self.device)
         sniff(self.device, prn=self._callback, filter="proto wlan")
 
     def work(self):

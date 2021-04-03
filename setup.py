@@ -17,7 +17,7 @@ setup(
     keywords="wardriving tool raspberry pi",
     packages=find_packages(),
     install_requires=[
-        "gps", "scapy", "loguru", "btpy", "spidev", "Pillow", "podb", "pyrunnable", "pyclsload"
+        "scapy", "gps", "loguru", "btpy", "spidev", "Pillow", "podb", "pyrunnable", "pyclsload"
     ],
     entry_points={
         'console_scripts': [
