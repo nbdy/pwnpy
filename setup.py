@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 setup(
     long_description=open("README.md", "r").read(),
     name="pwnpy",
-    version="1.0",
+    version="1.1",
     description="wardriving tool",
     author="Pascal Eberlein",
     author_email="pascal@eberlein.io",
@@ -17,7 +17,7 @@ setup(
     keywords="wardriving tool raspberry pi",
     packages=find_packages(),
     install_requires=[
-        "scapy", "gps", "loguru", "btpy", "spidev", "Pillow", "podb", "pyrunnable", "pyclsload"
+        "scapy", "gpsd-py3", "loguru", "btpy", "spidev", "Pillow", "podb", "pyrunnable", "pyclsload"
     ],
     entry_points={
         'console_scripts': [

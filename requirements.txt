@@ -1,4 +1,4 @@
-gps
+gpsd-py3
 loguru
 btpy
 spidev

@@ -1,4 +1,5 @@
-from pwnpy import Module, is_root, Manager, ModuleType
+from pwnpy import Module, is_root, Manager
+from pwnpy.libs import ModuleType
 from btpy import LEDevice, ClassicDevice
 from podb import DBEntry
 from loguru import logger as log

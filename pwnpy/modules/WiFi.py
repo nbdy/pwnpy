@@ -4,7 +4,8 @@ from scapy.all import conf
 from time import sleep
 from os import geteuid, system
 
-from pwnpy import Module, Manager, ModuleType
+from pwnpy import Module, Manager
+from pwnpy.libs import ModuleType, log
 
 conf.verb = 0
 
@@ -101,9 +102,11 @@ class WiFi(Module):
 
     def on_start(self):
         if geteuid() == 0:
+            log.info("Enabling monitor mode on {0}.", self.device)
             system("sudo airmon-ng start {0}".format(self.device))
             self.device = "{0}mon".format(self.device)
-        sniff(self.device, prn=self._callback, filter="proto wlan")
+        log.info("Going to sniff on {0} now.", self.device)
+        sniff(self.device, prn=self._callback)
 
     def work(self):
         sleep(0.1)

@@ -1,11 +1,12 @@
-from pwnpy import Module, Manager, log, ModuleType
+from pwnpy import Module, Manager
+from pwnpy.libs import ModuleType, log
 from time import sleep
 
-from gps import gps, WATCH_ENABLE, GPSD_PORT
+import gpsd as gps
 
 
 class GPS(Module):
-    _g: gps = None
+    _g = None
     type = ModuleType.GPS
 
     def __init__(self, mgr: Manager):
@@ -13,18 +14,25 @@ class GPS(Module):
 
     def on_start(self):
         try:
-            self._g = gps("127.0.0.1", GPSD_PORT, mode=WATCH_ENABLE)
+            self._g = gps.connect()
         except Exception as e:
             log.exception(e)
 
     def work(self):
-        self._g.next()
-        self.shared_data = {
-            "lat": self._g.fix.latitude,
-            "lng": self._g.fix.longitude,
-            "alt": self._g.fix.altitude,
-            "spd": self._g.fix.speed,
-            "sat": self._g.satellites_used,
-            "tme": self._g.fix.time
-        }
-        sleep(0.5)
+        try:
+            cp = gps.get_current()
+            self.shared_data = {
+                "lat": cp.lat,
+                "lng": cp.lon,
+                "alt": cp.alt,
+                "spd": cp.hspeed,
+                "sat": cp.sats,
+                "vsat": cp.sats_valid,
+                "tme": cp.time,
+                "clmb": cp.climb
+            }
+            # log.debug("Current position: {0}", self.shared_data)
+        except UserWarning as w:
+            log.warning(w)
+            pass
+        sleep(0.1)  # TODO(nbdy): adjust by current speed

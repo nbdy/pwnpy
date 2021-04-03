@@ -8,7 +8,7 @@ import pyclsload
 from os.path import isfile
 
 from typing import List
-from pwnpy import ModuleType, ExitCode
+from pwnpy.libs import ExitCode, ModuleType
 
 
 class NoConfigurationSuppliedException(Exception):
@@ -44,7 +44,9 @@ class Manager(Runnable):
         if len(mods) == 0 or not path.isdir(module_path):
             log.error("No modules to load, nothing to do.")
             return self.stop()
-        for m in listdir(module_path):
+        mods = listdir(module_path)
+        log.debug("Trying to load {0} of {1} modules.", len(modules), len(mods))
+        for m in mods:
             for w in modules:
                 if w.lower() == m.lower()[0:-3]:
                     log.info("Loading module: '{}'", m)
@@ -55,6 +57,14 @@ class Manager(Runnable):
                         continue
                     else:
                         self.modules.append(mod)
+        if len(self.modules) < len(modules):
+            log.warning("Only loaded {0} of {1} modules.", len(self.modules), len(modules))
+            log.warning("Could not load the following modules:")
+            for m in self.modules:
+                modules.remove(m.name)
+            for m in modules:
+                log.warning("\t- {0}", m)
+        log.debug("Loaded requested modules.")
 
     def _start_modules(self):
         for m in self.modules:

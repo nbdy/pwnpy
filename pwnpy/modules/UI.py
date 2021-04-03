@@ -5,7 +5,8 @@ from loguru import logger as log
 
 from PIL import Image, ImageDraw, ImageFont
 
-from pwnpy import Module, Manager, is_rpi, ExitCode, ModuleType
+from pwnpy import Module, Manager, is_rpi
+from pwnpy.libs import ExitCode, ModuleType
 
 if not is_rpi():
     log.error("The UI module only works with raspberry pies.")
