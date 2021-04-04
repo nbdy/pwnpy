@@ -13,12 +13,4 @@ if [ -f /sys/firmware/devicetree/base/model ] && [ "$1" == "-lipo" ]; then
   curl https://raw.githubusercontent.com/nbdy/clean-shutdown/master/setup.sh | bash
 fi
 
-if [ ! -f /usr/bin/mongo ]; then
-  echo "Installing MongoDB since it is not already installed."
-  wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
-  echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
-  sudo apt-get update
-  sudo apt-get install -y mongodb-org
-fi
-
 echo "Installer script has finished."

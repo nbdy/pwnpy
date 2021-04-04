@@ -3,7 +3,7 @@ from datetime import datetime
 from loguru import logger as log
 from os import listdir, path
 from runnable import Runnable
-from pymongo import MongoClient
+import dataset
 import pyclsload
 from os.path import isfile
 
@@ -32,8 +32,8 @@ class Manager(Runnable):
             raise NoConfigurationSuppliedException
         log.debug(cfg)
         self.timestamp_start = datetime.now()
-        self.db_client = MongoClient()
-        self.db = self.db_client[cfg["db"]]
+        self.db = dataset.connect("sqlite:///{0}".format(cfg["db"]))
+        self.db.connect()
         self.cfg = cfg
         self._load_modules(cfg["module-path"], cfg["modules"], cfg["w"], cfg["bt"])
 

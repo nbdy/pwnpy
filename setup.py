@@ -17,7 +17,7 @@ setup(
     keywords="wardriving tool raspberry pi",
     packages=find_packages(),
     install_requires=[
-        "scapy", "gpsd-py3", "loguru", "btpy", "spidev", "Pillow", "pymongo", "pyrunnable", "pyclsload"
+        "scapy", "gpsd-py3", "loguru", "btpy", "spidev", "Pillow", "dataset", "pyrunnable", "pyclsload"
     ],
     entry_points={
         'console_scripts': [

@@ -1,12 +1,10 @@
 from time import sleep
 
 from runnable import Runnable
-from podb import DB, DBEntry
 
 from loguru import logger as log
 
 from pwnpy.libs.Static import ExitCode, is_rpi, is_root
-from sys import getsizeof
 
 
 class ModuleType:
@@ -19,7 +17,6 @@ class ModuleType:
 
 class Module(Runnable):
     name = "DefaultModule"
-    db: DB = None
     shared_data = {}
     type = ModuleType.NONE
 
@@ -49,7 +46,7 @@ class Module(Runnable):
 
     def save(self, data: dict):
         data.update(self.mgr.shared_data)
-        self.mgr.db[self.name].insert_one(data)
+        self.mgr.db[self.name].upsert(data, data.keys())
 
     def save_multiple(self, data):
         for item in data:
