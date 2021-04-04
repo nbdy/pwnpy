@@ -18,6 +18,15 @@ class WiFi(Module):
         Module.__init__(self, "WiFi", mgr)
         self.device = mgr.cfg["w-device"]
 
+    @staticmethod
+    def set_or_not(o: dict, n: dict, k: str):
+        if k in n.keys():
+            if k == "crypto":
+                o[k] = ','.join(n[k])
+            else:
+                o[k] = n[k]
+        return o
+
     def _callback(self, pkt):
         if Dot11 in pkt:
             i = {
@@ -28,7 +37,12 @@ class WiFi(Module):
             }
             if Dot11Beacon in pkt:
                 ns = pkt[Dot11Beacon].network_stats()
-                i.update(ns)
+                i = self.set_or_not(i, ns, "ssid")
+                i = self.set_or_not(i, ns, "rates")
+                i = self.set_or_not(i, ns, "channel")
+                i = self.set_or_not(i, ns, "country")
+                i = self.set_or_not(i, ns, "crypto")
+
             self.save(i)
 
     def on_start(self):

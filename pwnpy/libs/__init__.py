@@ -49,8 +49,7 @@ class Module(Runnable):
 
     def save(self, data: dict):
         data.update(self.mgr.shared_data)
-        data = DBEntry(**data)
-        self.mgr.db.upsert(data)
+        self.mgr.db[self.name].insert_one(data)
 
     def save_multiple(self, data):
         for item in data:
