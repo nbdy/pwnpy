@@ -5,6 +5,8 @@ sudo apt-get install -y python3 python3-dev python3-pip cython3 gpsd gpsd-client
                         libpcap-dev libopenjp2-tools aircrack-ng libbluetooth-dev libjpeg-dev \
                         libglib2.0-dev
 
+pip3 install -r requirements.txt --upgrade
+
 if [ -f /sys/firmware/devicetree/base/model ] && [ "$1" == "-lipo" ]; then
   echo "Running on rpi and -lipo switch was specified."
   echo "Installing clean-shutdown script."
