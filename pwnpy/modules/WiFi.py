@@ -34,6 +34,7 @@ class WiFi(Module):
                 "addr2": pkt[Dot11].addr2,
                 "addr3": pkt[Dot11].addr3,
                 "addr4": pkt[Dot11].addr4,
+                "rssi": pkt[RadioTap].dBm_AntSignal
             }
             if Dot11Beacon in pkt:
                 ns = pkt[Dot11Beacon].network_stats()
