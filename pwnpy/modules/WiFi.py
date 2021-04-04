@@ -3,7 +3,7 @@ from scapy.layers.eap import EAPOL
 from scapy.all import conf
 from time import sleep
 from os import geteuid, system
-
+from podb import DBEntry
 from pwnpy import Module, Manager
 from pwnpy.libs import ModuleType, log
 
@@ -15,7 +15,7 @@ class DeviceTypes(object):
     TYPE_AP = "ap"
 
 
-class WiFiDevice(object):
+class WiFiDevice(DBEntry):
     address = None
     essid = None
     rates = None
@@ -23,14 +23,18 @@ class WiFiDevice(object):
     channel = -1
     encryption = None
     communication_partner = None
+    pkt_type = None
 
     def __init__(self, address):
+        DBEntry.__init__(self)
         self.address = address
 
+    # TODO(nbdy): create database relation
     @staticmethod
     def from_pkt(pkt):
         if pkt.haslayer(Dot11Beacon):
             s = WiFiAPDevice(pkt.getlayer(Dot11).addr2, pkt)
+            s.pkt_type = "Beacon"
             r = WiFiSTADevice(pkt.getlayer(Dot11).addr1, pkt)
         elif pkt.haslayer(Dot11) and pkt.getlayer(Dot11).type == 2 and not pkt.haslayer(EAPOL):
             s = WiFiSTADevice(pkt.getlayer(Dot11).addr2, pkt)
@@ -93,20 +97,22 @@ class WiFi(Module):
 
     def __init__(self, mgr: Manager, **kwargs):
         Module.__init__(self, "WiFi", mgr)
-        self.device = kwargs.get("device") or "wlan0"
+        self.device = mgr.cfg["w-device"]
 
     def _callback(self, pkt):
         if pkt.haslayer(Dot11):
-            s, r = WiFiDevice.from_pkt(pkt)
-            self.save_multiple([s, r])
+            r = WiFiDevice.from_pkt(pkt)
+            if r is not None:
+                s, r = r
+                self.save_multiple([s.__dict__, r.__dict__])
 
     def on_start(self):
         if geteuid() == 0:
             log.info("Enabling monitor mode on {0}.", self.device)
             system("sudo airmon-ng start {0}".format(self.device))
-            self.device = "{0}mon".format(self.device)
+            self.device = "wlan0mon"
         log.info("Going to sniff on {0} now.", self.device)
-        sniff(self.device, prn=self._callback)
+        sniff(iface=self.device, prn=self._callback)
 
     def work(self):
         sleep(0.1)

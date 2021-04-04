@@ -47,10 +47,13 @@ class Module(Runnable):
         sleep(secs)
 
     def save(self, data):
-        self.mgr.db.upsert(data)
+        data.update(self.mgr.shared_data)
+        log.debug("Saving: {0}", data)
+        self.mgr.db[self.name].upsert(data, list(data.keys()))
 
     def save_multiple(self, data):
-        self.mgr.db.upsert_many(data)
+        for item in data:
+            self.save(item)
 
 
 __all__ = ['Module', 'ExitCode', 'Manager', 'is_rpi', 'is_root', 'log', 'ModuleType']

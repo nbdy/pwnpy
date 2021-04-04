@@ -21,7 +21,7 @@ class GPS(Module):
     def work(self):
         try:
             cp = gps.get_current()
-            self.shared_data = {
+            dcp = {
                 "lat": cp.lat,
                 "lng": cp.lon,
                 "alt": cp.alt,
@@ -31,7 +31,8 @@ class GPS(Module):
                 "tme": cp.time,
                 "clmb": cp.climb
             }
-            # log.debug("Current position: {0}", self.shared_data)
+            self.shared_data = dcp
+            # log.debug("Current position: {0}", dcp)
         except UserWarning as w:
             log.warning(w)
             pass

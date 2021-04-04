@@ -3,7 +3,7 @@ from datetime import datetime
 from loguru import logger as log
 from os import listdir, path
 from runnable import Runnable
-from podb import DB
+import dataset
 import pyclsload
 from os.path import isfile
 
@@ -17,7 +17,7 @@ class NoConfigurationSuppliedException(Exception):
 
 class Manager(Runnable):
     cfg: dict = None
-    db: DB = None
+    db = None
 
     shared_data = {}
 
@@ -32,7 +32,8 @@ class Manager(Runnable):
             raise NoConfigurationSuppliedException
         log.debug(cfg)
         self.timestamp_start = datetime.now()
-        self.db = DB(cfg["db"])
+        self.db = dataset.connect("sqlite:///{0}".format(cfg["db"]))
+        self.cfg = cfg
         self._load_modules(cfg["module-path"], cfg["modules"], cfg["w"], cfg["bt"])
 
     def _load_modules(self, module_path: str, modules: List[str], wifi: bool, bt: bool):
@@ -93,7 +94,7 @@ class Manager(Runnable):
 
     def accumulate_shared_data(self):
         for m in self.modules:
-            if m.shared_data is not None:
+            if m.shared_data is not None and m.shared_data != {}:
                 self.shared_data[m.name] = m.shared_data
 
     def check_modules(self):
