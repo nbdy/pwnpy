@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Installing apt dependencies"
-sudo apt-get install -y python3 python3-dev python3-pip python3-cython gpsd gpsd-clients libgps-dev \
+sudo apt-get install -y python3 python3-dev python3-pip cython3 gpsd gpsd-clients libgps-dev \
                         libpcap-dev libopenjp2-tools aircrack-ng libbluetooth-dev libjpeg-dev \
                         libglib2.0-dev
 
@@ -14,7 +14,7 @@ fi
 if [ ! -f /usr/bin/mongo ]; then
   echo "Installing MongoDB since it is not already installed."
   wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
-  echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+  echo "deb [ arch=arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
   sudo apt-get update
   sudo apt-get install -y mongodb-org
 fi
