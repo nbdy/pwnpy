@@ -61,6 +61,7 @@ class Manager(Runnable):
                 if w.lower() == m.lower()[0:-3]:
                     log.info("Loading module: '{}'", m)
                     mod = pyclsload.load(path.join(module_path, m), w, *[self])
+                    log.info("Loaded module: {0}", mod.name)
                     self.modules.append(mod)
 
     def _load_modules(self, module_path: str, modules: List[str]):
