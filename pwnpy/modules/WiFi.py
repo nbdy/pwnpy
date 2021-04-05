@@ -53,7 +53,6 @@ class WiFi(Module):
         if Dot11Beacon in pkt:
             ns = pkt[Dot11Beacon].network_stats()
             i = self.set_or_not(i, ns, "ssid")
-            i = self.set_or_not(i, ns, "rates")
             i = self.set_or_not(i, ns, "channel")
             i = self.set_or_not(i, ns, "country")
             i = self.set_or_not(i, ns, "crypto")
