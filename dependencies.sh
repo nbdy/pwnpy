@@ -7,6 +7,10 @@ sudo apt-get install -y python3 python3-dev python3-pip cython3 gpsd gpsd-client
 
 pip3 install -r requirements.txt --upgrade
 
+if [ -f /sys/firmware/devicetree/base/model ]; then
+  pip3 install pip install RPi.GPIO --upgrade
+fi
+
 if [ -f /sys/firmware/devicetree/base/model ] && [ "$1" == "-lipo" ]; then
   echo "Running on rpi and -lipo switch was specified."
   echo "Installing clean-shutdown script."
