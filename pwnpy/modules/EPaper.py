@@ -361,6 +361,7 @@ class EPaper(Module):
                     # skip drawing the line if we are ignoring this key
                     for ik in self.ignored.keys():
                         if key == ik and sk in self.ignored[ik]:
+                            log.debug("Ignoring {0}:{1}", key, sk)
                             continue
 
                     line = "{}: {}".format(sk, data[key]["data"][sk])
