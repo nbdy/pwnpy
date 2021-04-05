@@ -31,9 +31,14 @@ class GPS(Module):
                 "tme": cp.time,
                 "clmb": cp.climb
             }
-            self.shared_data = dcp
-            # log.debug("Current position: {0}", dcp)
+            self.shared_data = {
+                "id": self.save(dcp),
+                "data": dcp
+            }
         except UserWarning as w:
             log.warning(w)
             pass
-        sleep(0.1)  # TODO(nbdy): adjust by current speed
+        if "spd" in self.shared_data.keys() and self.shared_data["spd"] > 0:
+            sleep(1 / self.shared_data["spd"])
+        else:
+            sleep(0.2)

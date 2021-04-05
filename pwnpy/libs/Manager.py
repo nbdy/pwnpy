@@ -3,7 +3,7 @@ from datetime import datetime
 from loguru import logger as log
 from os import listdir, path
 from runnable import Runnable
-from podb import DB
+import dataset
 import pyclsload
 from os.path import isfile
 
@@ -32,7 +32,7 @@ class Manager(Runnable):
             raise NoConfigurationSuppliedException
         log.debug(cfg)
         self.timestamp_start = datetime.now()
-        self.db = DB(cfg["db"])
+        self.db = dataset.connect("sqlite:///{0}".format(cfg["db"]))
         self.cfg = cfg
         self._load_modules(cfg["module-path"], cfg["modules"], cfg["w"], cfg["bt"])
 
@@ -41,11 +41,13 @@ class Manager(Runnable):
         if not path.isdir(module_path):
             log.error("Module directory '{}' does not exist.", module_path)
             return self.stop()
-        mods = listdir(module_path)
-        if len(mods) == 0 or not path.isdir(module_path):
+        mods = []
+        for m in listdir(module_path):
+            if m.endswith(".py") or m.endswith(".pyc"):
+                mods.append(m)
+        if len(mods) == 0:
             log.error("No modules to load, nothing to do.")
             return self.stop()
-        mods = listdir(module_path)
         log.debug("Trying to load {0} of {1} modules.", len(modules), len(mods))
         for m in mods:
             for w in modules:
@@ -103,7 +105,33 @@ class Manager(Runnable):
                 m.start()
 
     def work(self):
-        if isfile("/sys/firmware/devicetree/base/model"):
-            self.check_cleanshutd_pipe()
-        self.accumulate_shared_data()
-        sleep(0.1)
+        try:
+            if isfile("/sys/firmware/devicetree/base/model"):
+                self.check_cleanshutd_pipe()
+            self.accumulate_shared_data()
+            sleep(0.1)
+        except KeyboardInterrupt:
+            self.stop()
+
+    def get_loaded_module_names(self):
+        r = []
+        for m in self.modules:
+            r.append(m.name)
+        return r
+
+    def get_module_shared_data(self, name):
+        if name in self.shared_data.keys():
+            return self.shared_data[name]
+        return None
+
+    def get_shared_data_id(self, name):
+        m = self.get_module_shared_data(name)
+        if m is not None:
+            return m["id"]
+        return None
+
+    def get_shared_data_data(self, name):
+        m = self.get_module_shared_data(name)
+        if m is not None:
+            return m["data"]
+        return None
