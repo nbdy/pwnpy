@@ -8,12 +8,14 @@ from time import sleep
 class BT(Module):
     type = ModuleType.BT
 
+    device = "hci0"
     seen_classic = []
     seen_le = []
 
     def __init__(self, mgr: Manager, **kwargs):
         Module.__init__(self, "BT", mgr)
-        self.device = kwargs["device"] or "hci0"
+        if "device" in kwargs.keys():
+            self.device = kwargs["device"]
         self.devs_types = [ClassicDevice]
         self.shared_data["data"] = {
             "c": 0,
