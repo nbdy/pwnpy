@@ -309,7 +309,7 @@ class EPaper(Module):
     font = None
 
     ignored = {
-        "GPS": ["tme"]
+        "GPS": ["tme", "_uuid"],
     }
 
     def __init__(self, mgr: Manager, font_file=join(abspath(dirname(__file__)), 'Font.ttc'), **kwargs):
@@ -352,6 +352,7 @@ class EPaper(Module):
             ll = 0
             self.draw_line(db, (x, y), "{}: ".format(key))
             y += 12
+
             sks = []
             for sk in data[key]["data"].keys():
                 if key not in self.ignored.keys() or sk not in self.ignored[key]:
@@ -362,12 +363,6 @@ class EPaper(Module):
                 self.draw_line(db, (x, y + 12), "{}".format(data[key]["exit_reason"]))
             else:
                 for sk in sks:
-                    # skip drawing the line if we are ignoring this key
-                    for ik in self.ignored.keys():
-                        if key == ik and sk in self.ignored[ik]:
-                            log.debug("Ignoring {0}:{1}", key, sk)
-                            continue
-
                     line = "{}: {}".format(sk, data[key]["data"][sk])
                     _ll = db.textlength(line, self.font)
                     if _ll > ll:
