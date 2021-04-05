@@ -16,11 +16,9 @@ class WiFi(Module):
 
     seen_ssids = []
 
-    def __init__(self, mgr: Manager, **kwargs):
-        Module.__init__(self, "WiFi", mgr)
-        self.device = mgr.cfg["w-device"]
-
-        self.shared_data["data"] = {
+    shared_data = {
+        "id": None,
+        "data": {
             "opn": 0,
             "wep": 0,
             "wpa": 0,
@@ -28,6 +26,11 @@ class WiFi(Module):
             "wpa3": 0,
             "pkts": 0
         }
+    }
+
+    def __init__(self, mgr: Manager, **kwargs):
+        Module.__init__(self, "WiFi", mgr)
+        self.device = mgr.cfg["w-device"]
 
     @staticmethod
     def set_or_not(o: dict, n: dict, k: str):
