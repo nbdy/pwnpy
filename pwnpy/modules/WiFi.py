@@ -25,7 +25,8 @@ class WiFi(Module):
             "wep": 0,
             "wpa": 0,
             "wpa2": 0,
-            "wpa3": 0
+            "wpa3": 0,
+            "pkts": 0
         }
 
     @staticmethod
@@ -38,6 +39,7 @@ class WiFi(Module):
         return o
 
     def update_shared_data(self, i):
+        self.shared_data["data"]["pkts"] += 1
         if "ssid" in i.keys() and "crypto" in i.keys():
             s = i["ssid"]
             e = i["crypto"].lower()
@@ -48,7 +50,7 @@ class WiFi(Module):
                     if k in e:
                         if k == "open":
                             k = "opn"
-                        self.shared_data["data"]["data"][k] += 1
+                        self.shared_data["data"][k] += 1
 
     def dot11_beacon_check(self, i, pkt):
         if Dot11Beacon in pkt:
