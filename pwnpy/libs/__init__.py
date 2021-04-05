@@ -1,5 +1,5 @@
 from time import sleep
-
+from uuid import uuid4
 from runnable import Runnable
 
 from loguru import logger as log
@@ -17,7 +17,10 @@ class ModuleType:
 
 class Module(Runnable):
     name = "DefaultModule"
-    shared_data = {}
+    shared_data = {
+        "id": None,  # holds the uuid of the last inserted value so only a reference can be saved
+        "data": {}  # holds the actual data to be shared with other modules
+    }
     type = ModuleType.NONE
 
     exit_reason = ""
@@ -45,12 +48,10 @@ class Module(Runnable):
         sleep(secs)
 
     def save(self, data: dict):
-        data.update(self.mgr.shared_data)
+        u = str(uuid4())
+        data.update({"_uuid": u})
         self.mgr.db[self.name].insert(data)
-
-    def save_multiple(self, data):
-        for item in data:
-            self.save(item)
+        return u
 
 
 __all__ = ['Module', 'ExitCode', 'Manager', 'is_rpi', 'is_root', 'log', 'ModuleType']
