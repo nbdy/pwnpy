@@ -301,7 +301,7 @@ class Display(object):
         self.module_exit()
 
 
-class UI(Module):
+class EPaper(Module):
     c = None
     shared_data = None
     type = ModuleType.UI
