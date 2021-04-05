@@ -352,7 +352,11 @@ class EPaper(Module):
             ll = 0
             self.draw_line(db, (x, y), "{}: ".format(key))
             y += 12
-            sks = data[key]["data"].keys()
+            sks = []
+            for sk in data[key]["data"].keys():
+                if key not in self.ignored.keys() or sk not in self.ignored[key]:
+                    sks.append(sk)
+
             if "exit_reason" in sks:
                 self.draw_line(db, (x, y), "err:")
                 self.draw_line(db, (x, y + 12), "{}".format(data[key]["exit_reason"]))

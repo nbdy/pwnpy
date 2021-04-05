@@ -43,11 +43,11 @@ class WiFi(Module):
                 self.seen_ssids.append(s)
                 log.debug("Encryption: {0}", e)
                 if "open" in e or "opn" in e:
-                    self.shared_data["opn"] += 1
+                    self.shared_data["data"]["opn"] += 1
                 elif "wep" in e:
-                    self.shared_data["wep"] += 1
+                    self.shared_data["data"]["wep"] += 1
                 elif "wpa" in e:
-                    self.shared_data["wpa"] += 1
+                    self.shared_data["data"]["wpa"] += 1
 
     def dot11_beacon_check(self, i, pkt):
         if Dot11Beacon in pkt:
