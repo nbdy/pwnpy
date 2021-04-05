@@ -55,8 +55,9 @@ class WiFi(Module):
     def on_start(self):
         if geteuid() == 0:
             log.info("Enabling monitor mode on {0}.", self.device)
-            system("sudo airmon-ng start {0} && sudo ifconfig wlan0mon up".format(self.device))
-            self.device = "wlan0mon"
+            new_device = "{0}mon".format(self.device)
+            system("sudo airmon-ng start {0} && sudo ifconfig {1} up".format(self.device, new_device))
+            self.device = new_device
         log.info("Going to sniff on {0} now.", self.device)
         sniff(iface=self.device, prn=self._callback)
 
