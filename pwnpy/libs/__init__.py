@@ -26,6 +26,13 @@ class Module(Runnable):
     exit_reason = ""
     exit_code = ExitCode.NON_FATAL
 
+    def run(self) -> None:
+        while self.do_run:
+            try:
+                self.work()
+            except KeyboardInterrupt:
+                self.stop()
+
     def __init__(self, name, mgr):
         Runnable.__init__(self)
         self.name = name
