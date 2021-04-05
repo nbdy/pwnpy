@@ -116,3 +116,20 @@ class Manager(Runnable):
         for m in self.modules:
             r.append(m.name)
         return r
+
+    def get_module_shared_data(self, name):
+        if name in self.shared_data.keys():
+            return self.shared_data[name]
+        return None
+
+    def get_shared_data_id(self, name):
+        m = self.get_module_shared_data(name)
+        if m is not None:
+            return m["id"]
+        return None
+
+    def get_shared_data_data(self, name):
+        m = self.get_module_shared_data(name)
+        if m is not None:
+            return m["data"]
+        return None
