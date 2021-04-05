@@ -31,8 +31,10 @@ class GPS(Module):
                 "tme": cp.time,
                 "clmb": cp.climb
             }
-            self.shared_data = dcp
-            # log.debug("Current position: {0}", dcp)
+            self.shared_data = {
+                "id": self.save(dcp),
+                "data": dcp
+            }
         except UserWarning as w:
             log.warning(w)
             pass
