@@ -45,7 +45,6 @@ class WiFi(Module):
             e = i["crypto"].lower()
             if s not in self.seen_ssids:
                 self.seen_ssids.append(s)
-                log.debug("Encryption: {0}", e)
                 for k in ["open", "wep", "wpa3", "wpa2", "wpa"]:
                     if k in e:
                         if k == "open":
