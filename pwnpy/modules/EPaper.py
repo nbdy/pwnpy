@@ -308,11 +308,19 @@ class EPaper(Module):
 
     font = None
 
+    ignored = {
+        "GPS": ["tme"]
+    }
+
     def __init__(self, mgr: Manager, font_file=join(abspath(dirname(__file__)), 'Font.ttc'), **kwargs):
         Module.__init__(self, "UI", mgr)
         self.font_size = kwargs.get("font_size") or 10
         self.refresh_rate = kwargs.get("refresh_rate") or 5
         self.font_file = font_file
+
+        if "censor" in kwargs.keys():
+            if kwargs["censor"]:
+                self.ignored["GPS"] += ["lng", "lat"]
 
     def on_start(self):
         if isfile(self.font_file):
@@ -350,6 +358,11 @@ class EPaper(Module):
                 self.draw_line(db, (x, y + 12), "{}".format(data[key]["exit_reason"]))
             else:
                 for sk in sks:
+                    # skip drawing the line if we are ignoring this key
+                    for ik in self.ignored.keys():
+                        if key == ik and sk in self.ignored[ik]:
+                            continue
+
                     line = "{}: {}".format(sk, data[key]["data"][sk])
                     _ll = db.textlength(line, self.font)
                     if _ll > ll:
