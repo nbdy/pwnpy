@@ -304,7 +304,7 @@ class Display(object):
 class EPaper(Module):
     c = None
     shared_data = None
-    type = ModuleType.UI
+    type = ModuleType.EPaperUI
 
     font = None
 
@@ -313,7 +313,7 @@ class EPaper(Module):
     }
 
     def __init__(self, mgr: Manager, font_file=join(abspath(dirname(__file__)), 'Font.ttc'), **kwargs):
-        Module.__init__(self, "UI", mgr)
+        Module.__init__(self, "EPaper", mgr)
         self.font_size = kwargs.get("font_size") or 10
         self.refresh_rate = kwargs.get("refresh_rate") or 5
         self.font_file = font_file
