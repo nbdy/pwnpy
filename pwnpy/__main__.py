@@ -10,9 +10,7 @@ def main():
     ap = ArgumentParser()
     ap.add_argument("-c", "-cfg", "--config", "--configuration", help="path to configuration file",
                     default="config.json")
-    ap.add_argument("-b", "--bluetooth", help="enable bluetooth modules", action="store_true")
     ap.add_argument("-bd", "--bluetooth-device", help="which bluetooth device should be used", default="hci0")
-    ap.add_argument("-w", "--wifi", help="enable wifi modules", action="store_true")
     ap.add_argument("-wd", "--wifi-device", help="which wifi device should be used", default="wlan0")
     ap.add_argument("-db", "--database", help="name of database file", default="pwnpy.db")
     ap.add_argument("-m", "--module", help="specify modules to use", nargs="*", default=["UI", "GPS"])
@@ -33,8 +31,7 @@ def main():
     else:
         a.module_path = abspath(a.module_path)
         cfg = {
-            "bt": a.bluetooth, "bt-device": a.bluetooth_device,
-            "w": a.wifi, "w-device": a.wifi_device,
+            "bt-device": a.bluetooth_device, "w-device": a.wifi_device,
             "modules": a.module, "module-path": a.module_path,
             "lipo": a.lipo, "db": a.database
         }
