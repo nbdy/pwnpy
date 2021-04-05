@@ -14,17 +14,17 @@ BROADCAST = "ff:ff:ff:ff:ff:ff"
 class WiFi(Module):
     type = ModuleType.WIFI
 
-    shared_data = {
-        "opn": 0,
-        "wep": 0,
-        "wpa": 0,
-    }
-
     seen_ssids = []
 
     def __init__(self, mgr: Manager, **kwargs):
         Module.__init__(self, "WiFi", mgr)
         self.device = mgr.cfg["w-device"]
+
+        self.shared_data["data"] = {
+            "opn": 0,
+            "wep": 0,
+            "wpa": 0,
+        }
 
     @staticmethod
     def set_or_not(o: dict, n: dict, k: str):
