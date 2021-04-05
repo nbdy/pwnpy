@@ -8,7 +8,7 @@ import pyclsload
 from os.path import isfile
 
 from typing import List
-from pwnpy.libs import ExitCode, ModuleType
+from pwnpy.libs import ExitCode
 
 
 class NoConfigurationSuppliedException(Exception):
