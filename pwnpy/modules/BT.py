@@ -1,7 +1,6 @@
 from pwnpy import Module, is_root, Manager
 from pwnpy.libs import ModuleType
 from btpy import LEDevice, ClassicDevice
-from podb import DBEntry
 from loguru import logger as log
 from time import sleep
 
@@ -24,7 +23,6 @@ class BT(Module):
             for device in devices:
                 if "GPS" in self.mgr.shared_data:
                     device.__dict__.update(self.mgr.shared_data["GPS"])
-                entry = DBEntry(**device.__dict__)
                 log.debug("Found: {} | {}", device.name, device.address)
-                self.save(entry)
+                self.save(device.__dict__)
         sleep(0.2)
