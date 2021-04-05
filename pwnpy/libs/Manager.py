@@ -105,10 +105,13 @@ class Manager(Runnable):
                 m.start()
 
     def work(self):
-        if isfile("/sys/firmware/devicetree/base/model"):
-            self.check_cleanshutd_pipe()
-        self.accumulate_shared_data()
-        sleep(0.1)
+        try:
+            if isfile("/sys/firmware/devicetree/base/model"):
+                self.check_cleanshutd_pipe()
+            self.accumulate_shared_data()
+            sleep(0.1)
+        except KeyboardInterrupt:
+            self.stop()
 
     def get_loaded_module_names(self):
         r = []
