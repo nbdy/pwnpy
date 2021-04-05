@@ -13,12 +13,14 @@ class BT(Module):
 
     def __init__(self, mgr: Manager, **kwargs):
         Module.__init__(self, "BT", mgr)
-        self.device = kwargs.get("device") or "hci0"
+        self.device = kwargs["device"] or "hci0"
         self.devs_types = [ClassicDevice]
-        self.shared_data["data"]["c"] = 0
+        self.shared_data["data"] = {
+            "c": 0,
+            "l": 0
+        }
         if is_root():
             self.devs_types.append(LEDevice)
-            self.shared_data["data"]["l"] = 0
         else:
             log.warning("Disabling BT LE scanning because we do not have root rights.")
 
