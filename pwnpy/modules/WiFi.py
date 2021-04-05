@@ -15,10 +15,12 @@ class WiFi(Module):
     type = ModuleType.WIFI
 
     shared_data = {
-        "opn": [],
-        "wep": [],
-        "wpa": [],
+        "opn": 0,
+        "wep": 0,
+        "wpa": 0,
     }
+
+    seen_ssids = []
 
     def __init__(self, mgr: Manager, **kwargs):
         Module.__init__(self, "WiFi", mgr)
@@ -50,16 +52,25 @@ class WiFi(Module):
                 i = self.set_or_not(i, ns, "country")
                 i = self.set_or_not(i, ns, "crypto")
 
+            if "ssid" in i.keys() and "crypto" in i.keys():
+                s = i["ssid"]
+                e = i["crypto"].lower()
+                if s not in self.seen_ssids:
+                    self.seen_ssids.append(s)
+                    log.debug("Encryption: {0}", e)
+                    if "open" in e or "opn" in e:
+                        self.shared_data["opn"] += 1
+                    elif "wep" in e:
+                        self.shared_data["wep"] += 1
+                    elif "wpa" in e:
+                        self.shared_data["wpa"] += 1
+
             self.save(i)
 
     def on_start(self):
-        """
         if geteuid() == 0:
             log.info("Enabling monitor mode on {0}.", self.device)
-            new_device = "{0}mon".format(self.device)
-            system("sudo airmon-ng start {0} && sudo ifconfig {1} up".format(self.device, new_device))
-            self.device = new_device
-        """
+            system("sudo ifconfig {0} down; sudo iwconfig {0} mode monitor; sudo ifconfig {0} up".format(self.device))
         log.info("Going to sniff on {0} now.", self.device)
         sniff(iface=self.device, prn=self._callback)
 
