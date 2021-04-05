@@ -350,7 +350,7 @@ class EPaper(Module):
                 self.draw_line(db, (x, y + 12), "{}".format(data[key]["exit_reason"]))
             else:
                 for sk in sks:
-                    line = "{}: {}".format(sk, data[key][sk])
+                    line = "{}: {}".format(sk, data[key]["data"][sk])
                     _ll = db.textlength(line, self.font)
                     if _ll > ll:
                         ll = _ll
