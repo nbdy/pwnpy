@@ -33,7 +33,6 @@ class Manager(Runnable):
         log.debug(cfg)
         self.timestamp_start = datetime.now()
         self.db = dataset.connect("sqlite:///{0}".format(cfg["db"]))
-        self.db.connect()
         self.cfg = cfg
         self._load_modules(cfg["module-path"], cfg["modules"], cfg["w"], cfg["bt"])
 
@@ -108,3 +107,9 @@ class Manager(Runnable):
             self.check_cleanshutd_pipe()
         self.accumulate_shared_data()
         sleep(0.1)
+
+    def get_loaded_module_names(self):
+        r = []
+        for m in self.modules:
+            r.append(m.name)
+        return r
