@@ -41,7 +41,10 @@ class Manager(Runnable):
         if not path.isdir(module_path):
             log.error("Module directory '{}' does not exist.", module_path)
             return self.stop()
-        mods = listdir(module_path)
+        mods = []
+        for m in listdir(module_path):
+            if m.endswith(".py") or m.endswith(".pyc"):
+                mods.append(m)
         if len(mods) == 0 or not path.isdir(module_path):
             log.error("No modules to load, nothing to do.")
             return self.stop()
