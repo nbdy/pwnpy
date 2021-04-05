@@ -34,13 +34,19 @@ class Manager(Runnable):
         self.timestamp_start = datetime.now()
         self.db = dataset.connect("sqlite:///{0}".format(cfg["db"]))
         self.cfg = cfg
-        self._load_modules(cfg["module-path"], cfg["modules"], cfg["w"], cfg["bt"])
+        self._load_modules(cfg["module-path"], cfg["modules"])
 
-    def _load_modules(self, module_path: str, modules: List[str], wifi: bool, bt: bool):
-        log.debug("Searching for modules '{}' in directory {}", ', '.join(modules), module_path)
-        if not path.isdir(module_path):
-            log.error("Module directory '{}' does not exist.", module_path)
-            return self.stop()
+    def _show_unloaded_modules(self, modules):
+        if len(self.modules) < len(modules):
+            log.warning("Only loaded {0} of {1} modules.", len(self.modules), len(modules))
+            log.warning("Could not load the following modules:")
+            for m in self.modules:
+                if m.name in modules:
+                    modules.remove(m.name)
+            for m in modules:
+                log.warning("\t- {0}", m)
+
+    def _try_load_modules(self, module_path, modules):
         mods = []
         for m in listdir(module_path):
             if m.endswith(".py") or m.endswith(".pyc"):
@@ -55,19 +61,17 @@ class Manager(Runnable):
                 if w.lower() == m.lower()[0:-3]:
                     log.info("Loading module: '{}'", m)
                     mod = pyclsload.load(path.join(module_path, m), w, *[self])
-                    if (mod.type == ModuleType.WIFI and not wifi) or (mod.type == ModuleType.BT and not bt):
-                        del mod
-                    else:
-                        self.modules.append(mod)
+                    self.modules.append(mod)
 
-        if len(self.modules) < len(modules):
-            log.warning("Only loaded {0} of {1} modules.", len(self.modules), len(modules))
-            log.warning("Could not load the following modules:")
-            for m in self.modules:
-                if m.name in modules:
-                    modules.remove(m.name)
-            for m in modules:
-                log.warning("\t- {0}", m)
+    def _load_modules(self, module_path: str, modules: List[str]):
+        log.debug("Searching for modules '{}' in directory {}", ', '.join(modules), module_path)
+        if not path.isdir(module_path):
+            log.error("Module directory '{}' does not exist.", module_path)
+            return self.stop()
+
+        self._try_load_modules(module_path, modules)
+        self._show_unloaded_modules(modules)
+
         log.debug("Loaded requested modules.")
 
     def _start_modules(self):
