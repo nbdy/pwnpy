@@ -36,4 +36,4 @@ class GPS(Module):
         except UserWarning as w:
             log.warning(w)
             pass
-        sleep(0.1)  # TODO(nbdy): adjust by current speed
+        sleep(1 / self.shared_data["spd"])
