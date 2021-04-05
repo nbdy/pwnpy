@@ -45,10 +45,9 @@ class Manager(Runnable):
         for m in listdir(module_path):
             if m.endswith(".py") or m.endswith(".pyc"):
                 mods.append(m)
-        if len(mods) == 0 or not path.isdir(module_path):
+        if len(mods) == 0:
             log.error("No modules to load, nothing to do.")
             return self.stop()
-        mods = listdir(module_path)
         log.debug("Trying to load {0} of {1} modules.", len(modules), len(mods))
         for m in mods:
             for w in modules:
