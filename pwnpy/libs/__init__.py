@@ -12,7 +12,7 @@ class ModuleType:
     WIFI = 1
     BT = 2
     GPS = 3
-    UI = 4
+    EPaperUI = 4
 
 
 class Module(Runnable):
