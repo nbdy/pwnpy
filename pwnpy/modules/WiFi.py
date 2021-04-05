@@ -14,6 +14,12 @@ BROADCAST = "ff:ff:ff:ff:ff:ff"
 class WiFi(Module):
     type = ModuleType.WIFI
 
+    shared_data = {
+        "opn": [],
+        "wep": [],
+        "wpa": [],
+    }
+
     def __init__(self, mgr: Manager, **kwargs):
         Module.__init__(self, "WiFi", mgr)
         self.device = mgr.cfg["w-device"]
