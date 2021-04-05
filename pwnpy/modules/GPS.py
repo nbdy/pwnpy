@@ -36,4 +36,7 @@ class GPS(Module):
         except UserWarning as w:
             log.warning(w)
             pass
-        sleep(1 / self.shared_data["spd"])
+        if "spd" in self.shared_data.keys():
+            sleep(1 / self.shared_data["spd"])
+        else:
+            sleep(0.2)
