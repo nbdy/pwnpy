@@ -344,7 +344,7 @@ class EPaper(Module):
             ll = 0
             self.draw_line(db, (x, y), "{}: ".format(key))
             y += 12
-            sks = data[key].keys()
+            sks = data[key]["data"].keys()
             if "exit_reason" in sks:
                 self.draw_line(db, (x, y), "err:")
                 self.draw_line(db, (x, y + 12), "{}".format(data[key]["exit_reason"]))
