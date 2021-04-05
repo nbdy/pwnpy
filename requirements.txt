@@ -7,3 +7,4 @@ dataset
 pyrunnable
 pyclsload
 scapy
+gattlib
