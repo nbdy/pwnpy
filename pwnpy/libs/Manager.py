@@ -48,23 +48,24 @@ class Manager(Runnable):
         if len(mods) == 0:
             log.error("No modules to load, nothing to do.")
             return self.stop()
+
         log.debug("Trying to load {0} of {1} modules.", len(modules), len(mods))
         for m in mods:
             for w in modules:
                 if w.lower() == m.lower()[0:-3]:
                     log.info("Loading module: '{}'", m)
                     mod = pyclsload.load(path.join(module_path, m), w, *[self])
-                    if mod.type == ModuleType.WIFI and not wifi:
-                        continue
-                    elif mod.type == ModuleType.BT and not bt:
-                        continue
+                    if (mod.type == ModuleType.WIFI and not wifi) or (mod.type == ModuleType.BT and not bt):
+                        del mod
                     else:
                         self.modules.append(mod)
+
         if len(self.modules) < len(modules):
             log.warning("Only loaded {0} of {1} modules.", len(self.modules), len(modules))
             log.warning("Could not load the following modules:")
             for m in self.modules:
-                modules.remove(m.name)
+                if m.name in modules:
+                    modules.remove(m.name)
             for m in modules:
                 log.warning("\t- {0}", m)
         log.debug("Loaded requested modules.")
@@ -78,6 +79,7 @@ class Manager(Runnable):
         for m in self.modules:
             log.info("Stopping module '{}'", m.name)
             m.stop()
+            m.join()
 
     def on_start(self):
         self._start_modules()
@@ -105,13 +107,10 @@ class Manager(Runnable):
                 m.start()
 
     def work(self):
-        try:
-            if isfile("/sys/firmware/devicetree/base/model"):
-                self.check_cleanshutd_pipe()
-            self.accumulate_shared_data()
-            sleep(0.1)
-        except KeyboardInterrupt:
-            self.stop()
+        if isfile("/sys/firmware/devicetree/base/model"):
+            self.check_cleanshutd_pipe()
+        self.accumulate_shared_data()
+        sleep(0.1)
 
     def get_loaded_module_names(self):
         r = []
