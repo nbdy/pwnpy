@@ -26,3 +26,9 @@ pwnpy -c config.json
 # set capabilities for our python executable
 setcap cap_net_raw=eip /usr/bin/python3
 ```
+
+#### .. use the BT module without root
+```shell
+# set capabilities for our python executable
+sudo setcap 'cap_net_raw,cap_net_admin+eip' /usr/bin/python3
+```

@@ -3,6 +3,9 @@ from pwnpy.libs import ModuleType
 from btpy import LEDevice, ClassicDevice
 from loguru import logger as log
 from time import sleep
+from subprocess import check_output
+from os.path import realpath
+import sys
 
 
 class BT(Module):
@@ -21,7 +24,9 @@ class BT(Module):
             "c": 0,
             "l": 0
         }
-        if is_root():
+        py_exe = realpath(sys.executable)
+        if is_root() or b"cap_net_admin,cap_net_raw+eip" in check_output("getcap {}".format(py_exe)):
+            log.debug("Either we are root or {} has appropriate capabilities", py_exe)
             self.devs_types.append(LEDevice)
         else:
             log.warning("Disabling BT LE scanning because we do not have root rights.")
