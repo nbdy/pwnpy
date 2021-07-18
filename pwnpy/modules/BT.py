@@ -25,7 +25,7 @@ class BT(Module):
             "l": 0
         }
         py_exe = realpath(sys.executable)
-        if is_root() or b"cap_net_admin,cap_net_raw+eip" in check_output("getcap {}".format(py_exe)):
+        if is_root() or b"cap_net_admin,cap_net_raw+eip" in check_output("getcap {}".format(py_exe), shell=True):
             log.debug("Either we are root or {} has appropriate capabilities", py_exe)
             self.devs_types.append(LEDevice)
         else:
