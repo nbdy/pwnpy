@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 setup(
     long_description=open("README.md", "r").read(),
     name="pwnpy",
-    version="1.5",
+    version="1.51",
     description="wardriving tool",
     author="Pascal Eberlein",
     author_email="pascal@eberlein.io",

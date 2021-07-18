@@ -3,7 +3,6 @@
 wardriving tool
 
 ### features:
-- runs on any computer (can't remember having tested win though)
 - fully automatic
 - [modular](https://github.com/nbdy/pwnpy/tree/master/modules)
 - [LiPo SHIM](https://shop.pimoroni.com/products/lipo-shim) <br>

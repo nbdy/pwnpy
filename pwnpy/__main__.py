@@ -37,8 +37,9 @@ def main():
         }
     try:
         mgr = Manager(cfg)
+        mgr.start()
         try:
-            mgr.start()
+            mgr.join()
         except KeyboardInterrupt:
             mgr.stop()
     except NoConfigurationSuppliedException:

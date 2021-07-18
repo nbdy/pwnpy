@@ -7,4 +7,5 @@ dataset
 pyrunnable
 pyclsload
 scapy
+folium
 gattlib
