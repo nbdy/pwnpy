@@ -15,6 +15,11 @@ class BT(Module):
     seen_classic = []
     seen_le = []
 
+    @staticmethod
+    def is_le_scan_enabled():
+        py_exe = realpath(sys.executable)
+        return is_root() or b"cap_net_admin,cap_net_raw+eip" in check_output("getcap {}".format(py_exe), shell=True)
+
     def __init__(self, mgr: Manager, **kwargs):
         Module.__init__(self, "BT", mgr)
         if "device" in kwargs.keys():
@@ -24,9 +29,8 @@ class BT(Module):
             "c": 0,
             "l": 0
         }
-        py_exe = realpath(sys.executable)
-        if is_root() or b"cap_net_admin,cap_net_raw+eip" in check_output("getcap {}".format(py_exe), shell=True):
-            log.debug("Either we are root or {} has appropriate capabilities", py_exe)
+        if self.is_le_scan_enabled():
+            log.debug("Either we are root or the python executable has appropriate capabilities")
             self.devs_types.append(LEDevice)
         else:
             log.warning("Disabling BT LE scanning because we do not have root rights.")
