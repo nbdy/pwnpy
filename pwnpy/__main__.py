@@ -31,7 +31,8 @@ def main():
     else:
         a.module_path = abspath(a.module_path)
         cfg = {
-            "bt-device": a.bluetooth_device, "w-device": a.wifi_device,
+            "bt": a.bluetooth, "bt-device": a.bluetooth_device,
+            "w": a.wifi, "w-device": a.wifi_device,
             "modules": a.module, "module-path": a.module_path,
             "lipo": a.lipo, "db": a.database
         }
