@@ -301,26 +301,18 @@ class Display(object):
         self.module_exit()
 
 
-class EPaper(Module):
+class UI(Module):
     c = None
     shared_data = None
-    type = ModuleType.EPaperUI
+    type = ModuleType.UI
 
     font = None
 
-    ignored = {
-        "GPS": ["tme", "_uuid"],
-    }
-
     def __init__(self, mgr: Manager, font_file=join(abspath(dirname(__file__)), 'Font.ttc'), **kwargs):
-        Module.__init__(self, "EPaper", mgr)
+        Module.__init__(self, "UI", mgr)
         self.font_size = kwargs.get("font_size") or 10
         self.refresh_rate = kwargs.get("refresh_rate") or 5
         self.font_file = font_file
-
-        if "censor" in kwargs.keys():
-            if kwargs["censor"]:
-                self.ignored["GPS"] += ["lng", "lat"]
 
     def on_start(self):
         if isfile(self.font_file):
@@ -352,18 +344,13 @@ class EPaper(Module):
             ll = 0
             self.draw_line(db, (x, y), "{}: ".format(key))
             y += 12
-
-            sks = []
-            for sk in data[key]["data"].keys():
-                if key not in self.ignored.keys() or sk not in self.ignored[key]:
-                    sks.append(sk)
-
+            sks = data[key].keys()
             if "exit_reason" in sks:
                 self.draw_line(db, (x, y), "err:")
                 self.draw_line(db, (x, y + 12), "{}".format(data[key]["exit_reason"]))
             else:
                 for sk in sks:
-                    line = "{}: {}".format(sk, data[key]["data"][sk])
+                    line = "{}: {}".format(sk, data[key][sk])
                     _ll = db.textlength(line, self.font)
                     if _ll > ll:
                         ll = _ll
