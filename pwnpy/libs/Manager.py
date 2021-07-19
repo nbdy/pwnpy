@@ -73,8 +73,6 @@ class Manager(Runnable):
         self._try_load_modules(module_path, modules)
         self._show_unloaded_modules(modules)
 
-        log.debug("Loaded requested modules.")
-
     def _start_modules(self):
         for m in self.modules:
             log.info("Starting module '{}'", m.name)
