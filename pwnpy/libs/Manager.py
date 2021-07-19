@@ -1,13 +1,14 @@
-from time import sleep
 from datetime import datetime
-from loguru import logger as log
 from os import listdir, path
-from runnable import Runnable
+from os.path import isfile
+from time import sleep
+from typing import List
+
 import dataset
 import pyclsload
-from os.path import isfile
+from loguru import logger as log
+from runnable import Runnable
 
-from typing import List
 from pwnpy.libs import ExitCode
 
 
@@ -92,7 +93,7 @@ class Manager(Runnable):
 
     def check_cleanshutd_pipe(self):
         if isfile("/tmp/cleanshutd"):
-            if open("/tmp/cleanshutd").read() == '1':  # todo configurable
+            if open("/tmp/cleanshutd").read() == '1':
                 self.db.insert(self.name, {
                     "start": self.timestamp_start,
                     "end": datetime.now()

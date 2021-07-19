@@ -8,5 +8,3 @@ pyrunnable
 pyclsload
 scapy
 folium
-gattlib
-exceptionalpy

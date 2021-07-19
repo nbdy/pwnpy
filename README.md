@@ -21,14 +21,14 @@ pip3 install pwnpy
 pwnpy -c config.json
 ```
 
-#### .. use the WiFi module without root
+#### ... use the WiFi module without root
 ```shell
 # set capabilities for our python executable
 setcap cap_net_raw=eip /usr/bin/python3
 ```
 
-#### .. use the BT module without root
+#### ... use the BT module without root
 ```shell
-# set capabilities for our python executable
-sudo setcap 'cap_net_raw,cap_net_admin+eip' /usr/bin/python3
+# add the pi user to the bluetooth group and reboot
+sudo usermod -a -G bluetooth pi ; reboot
 ```
