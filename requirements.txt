@@ -8,3 +8,5 @@ pyrunnable
 pyclsload
 scapy
 folium
+flask
+onboot

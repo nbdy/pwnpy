@@ -1,9 +1,15 @@
 from argparse import ArgumentParser
 from json import load
 from os.path import isfile, abspath, dirname, join
+from os import getcwd
+
 from loguru import logger as log
+from onboot import install_linux
 
 from pwnpy import Manager, NoConfigurationSuppliedException
+
+
+APPLICATION = "io.eberlein.pwnpy"
 
 
 def main():
@@ -19,9 +25,23 @@ def main():
     ap.add_argument("-mp", "--module-path", help="where do the modules live",
                     default=join(abspath(join(dirname(__file__))), "modules"))
     ap.add_argument("-l", "--lipo", help="watch for lipo state", action="store_true")
+    ap.add_argument("-ea", "--enable-autostart", help="enable autostart", action="store_true")
+    ap.add_argument("-da", "--disable-autostart", help="disable autostart", action="store_true")
+    ap.add_argument("-aa", "--autostart-args", help="arguments to use for autostart", default="-b -w -m UI GPS BT WiFi")
     a = ap.parse_args()
 
     cfg = None
+    if a.enable_autostart and a.autostart_args:
+        options = {
+            "args": [
+                join(abspath(getcwd()), "__main__.py"),
+                a.autostart_args
+            ]
+        }
+        autostart.enable(APPLICATION, options)
+
+    if a.disable_autostart:
+        autostart.disable(APPLICATION)
 
     if "configuration" in a:
         cf = a.configuration
