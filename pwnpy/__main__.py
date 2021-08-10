@@ -1,10 +1,9 @@
 from argparse import ArgumentParser
 from json import load
-from os.path import isfile, abspath, dirname, join
-from os import getcwd
+from os.path import isfile, abspath, dirname, join, basename
 
 from loguru import logger as log
-from onboot import install_linux
+from onboot import CrontabInstaller, InstallerConfiguration
 
 from pwnpy import Manager, NoConfigurationSuppliedException
 
@@ -31,17 +30,12 @@ def main():
     a = ap.parse_args()
 
     cfg = None
+    ci = CrontabInstaller(InstallerConfiguration(dirname(__file__), basename(__file__)))
     if a.enable_autostart and a.autostart_args:
-        options = {
-            "args": [
-                join(abspath(getcwd()), "__main__.py"),
-                a.autostart_args
-            ]
-        }
-        autostart.enable(APPLICATION, options)
+        ci.install()
 
     if a.disable_autostart:
-        autostart.disable(APPLICATION)
+        ci.uninstall()
 
     if "configuration" in a:
         cf = a.configuration

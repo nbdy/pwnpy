@@ -9,14 +9,6 @@ wardriving tool
     - you might want to use [this](https://github.com/nbdy/clean-shutdown)
 - [2.13 inch ePaper display](https://www.waveshare.com/wiki/2.13inch_e-Paper_HAT_(B))
 
-### modules:
-- [X] Bluetooth
-  - [X] LE
-  - [X] Classic
-- [X] GPS
-- [X] EPaperUI
-- [X] WiFi
-- [ ] WebUI
 ### show and tell
 [![asciicast](https://asciinema.org/a/299821.svg)](https://asciinema.org/a/299821)
 ### how to...
